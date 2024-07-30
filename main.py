@@ -94,9 +94,6 @@ def main():
             st.write("Processing your file...")
             original_text = extract_text_from_pdf(uploaded_file)
 
-            with st.expander("Original Text"):
-                st.write(original_text)
-
             simplified_text = simplify_text_with_gemini(original_text, api_key)
             metrics = analyze_text(simplified_text)
 
@@ -120,8 +117,14 @@ def main():
             else:
                 status_text.text(f"The simplified text still doesn't meet all readability criteria after {max_iterations} iterations.")
 
-            st.subheader("Simplified Text")
-            st.write(simplified_text)
+            st.subheader("Original vs Simplified Text")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**Original Text**")
+                st.text_area("", value=original_text, height=400, disabled=True)
+            with col2:
+                st.markdown("**Simplified Text**")
+                st.text_area("", value=simplified_text, height=400, disabled=True)
 
             st.subheader("Readability Metrics")
             col1, col2 = st.columns(2)
