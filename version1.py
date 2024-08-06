@@ -11,11 +11,15 @@ logger = logging.getLogger(__name__)
 
 def extract_text_from_pdf(pdf_file):
     """Extract text from a PDF file."""
-    pdf_reader = PyPDF2.PdfReader(pdf_file)
-    text = ''
-    for page in pdf_reader.pages:
-        text += page.extract_text()
-    return text
+    try:
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
+        text = ''
+        for page in pdf_reader.pages:
+            text += page.extract_text()
+        return text
+    except Exception as e:
+        logger.error(f"Error extracting text from PDF: {str(e)}", exc_info=True)
+        return ""
 
 def simplify_text_with_claude(text, api_key, metrics=None):
     """Use Claude to simplify the given text, optionally using current metrics."""
@@ -154,7 +158,19 @@ def main():
                 st.write("Processing your file...")
                 original_text = extract_text_from_pdf(uploaded_file)
 
+                if not original_text:
+                    st.error("Failed to extract text from the PDF. Please check if the file is readable.")
+                    return
+
+                st.subheader("Original Text")
+                st.text_area("", value=original_text, height=200, disabled=True)
+
                 initial_metrics = analyze_text(original_text)
+                
+                st.subheader("Initial Metrics")
+                display_metrics(initial_metrics)
+
+                st.write("Simplifying text...")
                 simplified_text = simplify_text_with_claude(original_text, api_key)
                 
                 if simplified_text.startswith("Error:"):
@@ -202,6 +218,7 @@ def main():
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
+                logger.error(f"Error in main function: {str(e)}", exc_info=True)
     else:
         st.warning("Please enter your Anthropic API Key and upload a PDF file to proceed.")
 
