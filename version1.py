@@ -108,71 +108,9 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         
         Please adjust the text to improve these metrics while maintaining accuracy and completeness.
         """
-        base_prompt += metric_feedback.format(
-            gsmog=metrics["G-SMOG"],
-            wstf=metrics["Wiener Sachtextformel"],
-            lix=metrics["German LIX"]
-        )
-    
-    full_prompt = base_prompt + "\n\nHere's the text to simplify:\n\n" + text
+    full_prompt = f"{base_prompt}\n{metric_feedback}\n\nText to process:\n\n{text}"
     response = model.generate_content(full_prompt)
     return response.text
-
-def calculate_gsmog(text):
-    sentences = re.split(r'[.!?]+', text)
-    word_count = sum(len(re.findall(r'\w+', sentence)) for sentence in sentences)
-    polysyllable_count = sum(1 for word in re.findall(r'\w+', text) if count_syllables(word) >= 3)
-    
-    if word_count >= 30:
-        gsmog = 1.0430 * math.sqrt(polysyllable_count * (30 / word_count)) + 3.1291
-    else:
-        gsmog = 1.0430 * math.sqrt(polysyllable_count * (word_count / 30)) + 3.1291
-    
-    return gsmog
-
-def calculate_wiener_sachtextformel(text):
-    sentences = re.split(r'[.!?]+', text)
-    word_count = sum(len(re.findall(r'\w+', sentence)) for sentence in sentences)
-    words_with_3plus_syllables = sum(1 for word in re.findall(r'\w+', text) if count_syllables(word) >= 3)
-    words_with_6plus_chars = sum(1 for word in re.findall(r'\w+', text) if len(word) > 6)
-    
-    ms = words_with_3plus_syllables / word_count * 100
-    sl = word_count / len(sentences)
-    iw = words_with_6plus_chars / word_count * 100
-    es = 1 / word_count * 100
-    
-    wstf = 0.1935 * ms + 0.1672 * sl + 0.1297 * iw - 0.0327 * es - 0.875
-    
-    return wstf
-
-def calculate_german_lix(text):
-    sentences = re.split(r'[.!?]+', text)
-    word_count = sum(len(re.findall(r'\w+', sentence)) for sentence in sentences)
-    words_with_6plus_chars = sum(1 for word in re.findall(r'\w+', text) if len(word) > 6)
-    
-    average_sentence_length = word_count / len(sentences)
-    percentage_long_words = words_with_6plus_chars / word_count * 100
-    
-    lix = average_sentence_length + percentage_long_words
-    
-    return lix
-
-def count_syllables(word):
-    word = word.lower()
-    count = 0
-    vowels = 'aeiouy'
-    if word[0] in vowels:
-        count += 1
-    for index in range(1, len(word)):
-        if word[index] in vowels and word[index - 1] not in vowels:
-            count += 1
-    if word.endswith('e'):
-        count -= 1
-    if word.endswith('le'):
-        count += 1
-    if count == 0:
-        count += 1
-    return count
 
 def analyze_text(text):
     """Analyze the readability of the given text."""
