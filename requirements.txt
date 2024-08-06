@@ -1,4 +1,4 @@
 streamlit==1.24.0
 PyPDF2==3.0.1
-google-generativeai==0.3.1
+google-generativeai
 textstat==0.7.3
