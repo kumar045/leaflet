@@ -131,6 +131,16 @@ def is_text_readable(metrics):
             7 <= metrics["Coleman-Liau Index"] <= 9 and
             7 <= metrics["Automated Readability Index"] <= 9)
 
+def display_metrics(metrics):
+    st.subheader("Readability Metrics")
+    for metric, value in metrics.items():
+        if isinstance(value, (int, float)):
+            st.write(f"{metric}: {value:.2f}")
+        elif isinstance(value, str):
+            st.write(f"{metric}: {value}")
+        else:
+            st.write(f"{metric}: {value}")
+
 def main():
     st.title("Medical Leaflet Simplifier")
     st.write("Upload a PDF of a medical leaflet to simplify its content.")
@@ -160,9 +170,7 @@ def main():
                         st.markdown("**Simplified Text**")
                         st.text_area("", value=simplified_text, height=400, disabled=True)
 
-                    st.subheader("Readability Metrics")
-                    # for metric, value in metrics.items():
-                    #     st.write(f"{metric}: {value:.2f}")
+                    display_metrics(metrics)
 
                     iteration = 1
                     max_iterations = 5
