@@ -97,11 +97,14 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
     """
     
     if metrics:
-        metric_feedback = """
+        metric_feedback = f"""
         Current readability metrics:
-        - G-SMOG: {gsmog:.2f} (target: <= 6)
-        - Wiener Sachtextformel: {wstf:.2f} (target: <= 6)
-        - German LIX: {lix:.2f} (target: <= 38)
+        - Flesch Reading Ease: {metrics['Flesch Reading Ease']:.2f} (target: 60-70)
+        - Flesch-Kincaid Grade: {metrics['Flesch-Kincaid Grade']:.2f} (target: 6-8)
+        - Gunning Fog: {metrics['Gunning Fog']:.2f} (target: 8-10)
+        - SMOG Index: {metrics['SMOG Index']:.2f} (target: 7-9)
+        - Coleman-Liau Index: {metrics['Coleman-Liau Index']:.2f} (target: 7-9)
+        - Automated Readability Index: {metrics['Automated Readability Index']:.2f} (target: 7-9)
         
         Please adjust the text to improve these metrics while maintaining accuracy and completeness.
         """
