@@ -13,6 +13,29 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 def simplify_text_with_gemini(text, api_key, metrics=None):
+    # Use a safety settings to avoid potential content filtering issues
+    safety_settings = [
+        {
+            "category": "HARM_CATEGORY_DANGEROUS",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_HARASSMENT",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "threshold": "BLOCK_NONE",
+        },
+    ]
     """Use Gemini to simplify the given text, optionally using current metrics."""
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
@@ -110,7 +133,7 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         )
     
     full_prompt = base_prompt + "\n\nHere's the text to simplify:\n\n" + text
-    response = model.generate_content(full_prompt)
+    response = model.generate_content(full_prompt,safety_settings=safety_settings)
     return response.text
 
 def calculate_gsmog(text):
