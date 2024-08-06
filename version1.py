@@ -1,9 +1,8 @@
 import streamlit as st
 import PyPDF2
-import anthropic
+import google.generativeai as genai
 import textstat
 import logging
-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -21,10 +20,25 @@ def extract_text_from_pdf(pdf_file):
         logger.error(f"Error extracting text from PDF: {str(e)}", exc_info=True)
         return ""
 
-def simplify_text_with_claude(text, api_key, metrics=None):
-    """Use Claude to simplify the given text, optionally using current metrics."""
+def initialize_gemini_client(api_key):
+    """Initialize the Google Gemini client with the provided API key."""
+    genai.configure(api_key=api_key)
+    return genai.GenerativeModel(
+        model_name="gemini-1.5-pro-exp-0801",  # Replace with your model name
+        generation_config={
+            "temperature": 1,
+            "top_p": 0.95,
+            "top_k": 64,
+            "max_output_tokens": 8192,
+            "response_mime_type": "text/plain",
+        }
+    )
+
+def simplify_text_with_gemini(text, api_key, metrics=None):
+    """Use Google Gemini to simplify the given text, optionally using current metrics."""
     try:
-        client = Anthropic(api_key=api_key)
+        model = initialize_gemini_client(api_key)
+        chat_session = model.start_chat(history=[])
 
         base_prompt = f"""
         {HUMAN_PROMPT} You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
@@ -66,34 +80,12 @@ def simplify_text_with_claude(text, api_key, metrics=None):
         {AI_PROMPT}
         """
 
-        if metrics:
-            metric_feedback = f"""
-            Current readability metrics:
-            - Flesch Reading Ease: {metrics['Flesch Reading Ease']:.2f} (target: 60-70)
-            - Flesch-Kincaid Grade: {metrics['Flesch-Kincaid Grade']:.2f} (target: 6-8)
-            - Gunning Fog: {metrics['Gunning Fog']:.2f} (target: 8-10)
-            - SMOG Index: {metrics['SMOG Index']:.2f} (target: 7-9)
-            - Coleman-Liau Index: {metrics['Coleman-Liau Index']:.2f} (target: 7-9)
-            - Automated Readability Index: {metrics['Automated Readability Index']:.2f} (target: 7-9)
-            
-            Please adjust the text to improve these metrics while maintaining accuracy and completeness.
-
-            {HUMAN_PROMPT} Using the metrics provided above, please simplify the text further to improve readability while maintaining all important information. {AI_PROMPT}
-            """
-            base_prompt += metric_feedback
-
-        try:
-            response = client.completions.create(
-                model="claude-2.1",
-                max_tokens_to_sample=2000,
-                prompt=base_prompt
-            )
-            return response.completion
-        except Exception as e:
-            logger.error("API call failed: %s", str(e))
-            return f"Error: Unable to generate content. Please check your API key and try again. Details: {str(e)}"
+        chat_session.send_message(base_prompt)
+        response = chat_session.send_message(text)
+        
+        return response.text
     except Exception as e:
-        logger.error("Error in simplify_text_with_claude: %s", str(e))
+        logger.error("Error in simplify_text_with_gemini: %s", str(e))
         return f"Error: Unable to process the request. Please try again later. Details: {str(e)}"
 
 def analyze_text(text):
@@ -140,7 +132,7 @@ def main():
     st.title("Medical Leaflet Simplifier")
     st.write("Upload a PDF of a medical leaflet to simplify its content.")
 
-    api_key = st.text_input("Enter your Anthropic API Key", type="password")
+    api_key = st.text_input("Enter your Google Gemini API Key", type="password")
     uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
     if api_key and uploaded_file is not None:
@@ -162,7 +154,7 @@ def main():
                 display_metrics(initial_metrics)
 
                 st.write("Simplifying text...")
-                simplified_text = simplify_text_with_claude(original_text, api_key)
+                simplified_text = simplify_text_with_gemini(original_text, api_key)
                 
                 if simplified_text.startswith("Error:"):
                     st.error(simplified_text)
@@ -180,7 +172,7 @@ def main():
                         st.write(f"Iteration {iteration} - Simplified Text Preview:")
                         st.text_area("", value=simplified_text[:2000], height=200, disabled=True)  # Show a snippet of the text
 
-                        simplified_text = simplify_text_with_claude(simplified_text, api_key, final_metrics)
+                        simplified_text = simplify_text_with_gemini(simplified_text, api_key, final_metrics)
                         final_metrics = analyze_text(simplified_text)
                         iteration += 1
                         progress_bar.progress(iteration / max_iterations)
@@ -214,7 +206,7 @@ def main():
                 st.error(f"An error occurred: {str(e)}")
                 logger.error(f"Error in main function: {str(e)}", exc_info=True)
     else:
-        st.warning("Please enter your Anthropic API Key and upload a PDF file to proceed.")
+        st.warning("Please enter your Google Gemini API Key and upload a PDF file to proceed.")
 
 if __name__ == "__main__":
     main()
