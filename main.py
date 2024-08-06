@@ -15,18 +15,7 @@ def extract_text_from_pdf(pdf_file):
 def simplify_text_with_gemini(text, api_key, metrics=None):
     """Use Gemini to simplify the given text, optionally using current metrics."""
     genai.configure(api_key=api_key)
-    # Create the model
-    generation_config = {
-      "temperature": 1,
-      "top_p": 0.95,
-      "top_k": 64,
-      "max_output_tokens": 8192,
-      "response_mime_type": "text/plain",
-    }
-    model = genai.GenerativeModel(
-    model_name="gemini-1.5-pro-exp-0801",
-    generation_config=generation_config,
-    )
+    model = genai.GenerativeModel('gemini-pro')
     
     base_prompt = """
     Task: Rewrite pharmaceutical and medical instructions to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Maintain all legal and safety information, including specific instructions for special groups and overdose situations. Keep the text length similar to the original.
@@ -121,12 +110,7 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         )
     
     full_prompt = base_prompt + "\n\nHere's the text to simplify:\n\n" + text
-    chat_session = model.start_chat(
-    history=[
-    ]
-    )
-
-    response = chat_session.send_message(full_prompt)
+    response = model.generate_content(full_prompt)
     return response.text
 
 def calculate_gsmog(text):
