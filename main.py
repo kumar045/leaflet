@@ -121,7 +121,12 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         )
     
     full_prompt = base_prompt + "\n\nHere's the text to simplify:\n\n" + text
-    response = model.generate_content(full_prompt)
+    chat_session = model.start_chat(
+    history=[
+    ]
+    )
+
+    response = chat_session.send_message(full_prompt)
     return response.text
 
 def calculate_gsmog(text):
