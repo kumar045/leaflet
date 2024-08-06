@@ -22,11 +22,10 @@ def extract_text_from_pdf(pdf_file):
         return ""
 
 def simplify_text_with_claude(text, api_key, metrics=None):
-    
     """Use Claude to simplify the given text, optionally using current metrics."""
     try:
         client = Anthropic(api_key=api_key)
-        
+
         base_prompt = f"""
         {HUMAN_PROMPT} You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
 
@@ -82,7 +81,7 @@ def simplify_text_with_claude(text, api_key, metrics=None):
             {HUMAN_PROMPT} Using the metrics provided above, please simplify the text further to improve readability while maintaining all important information. {AI_PROMPT}
             """
             base_prompt += metric_feedback
-        st.write(base_prompt)
+
         try:
             response = client.completions.create(
                 model="claude-2.1",
@@ -92,10 +91,10 @@ def simplify_text_with_claude(text, api_key, metrics=None):
             return response.completion
         except Exception as e:
             logger.error("API call failed: %s", str(e))
-            return "Error: Unable to generate content. Please check your API key and try again. Details: {}".format(str(e))
+            return f"Error: Unable to generate content. Please check your API key and try again. Details: {str(e)}"
     except Exception as e:
         logger.error("Error in simplify_text_with_claude: %s", str(e))
-        return "Error: Unable to process the request. Please try again later. Details: {}".format(str(e))
+        return f"Error: Unable to process the request. Please try again later. Details: {str(e)}"
 
 def analyze_text(text):
     """Analyze the readability of the given text."""
@@ -178,6 +177,9 @@ def main():
 
                     while not is_text_readable(final_metrics) and iteration < max_iterations:
                         status_text.text(f"Iteration {iteration}: Simplifying further...")
+                        st.write(f"Iteration {iteration} - Simplified Text Preview:")
+                        st.text_area("", value=simplified_text[:2000], height=200, disabled=True)  # Show a snippet of the text
+
                         simplified_text = simplify_text_with_claude(simplified_text, api_key, final_metrics)
                         final_metrics = analyze_text(simplified_text)
                         iteration += 1
