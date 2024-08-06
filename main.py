@@ -15,7 +15,7 @@ def extract_text_from_pdf(pdf_file):
 def simplify_text_with_gemini(text, api_key, metrics=None):
     """Use Gemini to simplify the given text, optionally using current metrics."""
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('"gemini-1.5-pro-exp-0801"')
     
     base_prompt = """
     Task: Rewrite pharmaceutical and medical instructions to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Maintain all legal and safety information, including specific instructions for special groups and overdose situations. Keep the text length similar to the original.
