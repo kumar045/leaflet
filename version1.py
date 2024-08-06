@@ -135,7 +135,7 @@ def analyze_text(text):
 
 def is_text_readable(metrics):
     """Check if the text meets readability criteria."""
-     return (60 <= metrics["Flesch Reading Ease"] <= 70 and
+    return (60 <= metrics["Flesch Reading Ease"] <= 70 and
             6 <= metrics["Flesch-Kincaid Grade"] <= 8 and
             8 <= metrics["Gunning Fog"] <= 10 and
             7 <= metrics["SMOG Index"] <= 9 and
