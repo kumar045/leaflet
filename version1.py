@@ -96,6 +96,8 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
     Now, simplify the following text while maintaining its length and all important information:
     """
     
+    full_prompt = base_prompt
+
     if metrics:
         metric_feedback = f"""
         Current readability metrics:
@@ -108,10 +110,12 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         
         Please adjust the text to improve these metrics while maintaining accuracy and completeness.
         """
-    full_prompt = f"{base_prompt}\n{metric_feedback}\n\nText to process:\n\n{text}"
+        full_prompt += f"\n{metric_feedback}"
+
+    full_prompt += f"\n\nText to process:\n\n{text}"
     response = model.generate_content(full_prompt)
     return response.text
-
+    
 def analyze_text(text):
     """Analyze the readability of the given text."""
     metrics = {
