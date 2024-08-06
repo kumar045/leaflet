@@ -1,8 +1,10 @@
+
 import streamlit as st
 import PyPDF2
 import google.generativeai as genai
 import re
 import math
+import textstat
 
 def extract_text_from_pdf(pdf_file):
     """Extract text from a PDF file."""
@@ -49,7 +51,47 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
     Original: "Sie sollten daher während des 1 und 2 Schwangerschaftsdrittels {Produkt} nur nach Rücksprache mit dem Arzt oder Zahnarzt und nur in der geringsten wirksamen Dosis und für die kürzestmögliche Zeit einnehmen, da es Hinweise auf ein erhöhtes Risiko von Fehlgeburten und Missbildungen gibt."
     Simplified: "Nehmen Sie {Produkt} in den ersten 6 Monaten Ihrer Schwangerschaft nur nach Rücksprache mit Ihrem Arzt ein. Bitte nehmen Sie nur die niedrigste Dosis ein. Achten Sie auch darauf {Produkt} nur für die kürzest mögliche Zeit einzunehmen. Bei falscher Einnahme kann es zu Fehlgeburten oder Missbildungen bei Ihrem Kind kommen. Weitere Informationen zur Einnahme finden Sie in Kapitel 3 dieser Packungsbeilage."
 
-    [Examples 3-10 would be included here, but omitted for brevity]
+    Example 3:
+    Original: "Vorsicht ist angeraten, wenn Sie gleichzeitig Arzneimittel erhalten, die das Risiko für Geschwüre oder Blutungen erhöhen können, wie z.B. orale Kortikosteroide, blutgerinnungshemmende Medikamente wie Warfarin, selektive Serotonin-Wiederaufnahmehemmer, die unter anderem zur Behandlung von depressiven Verstimmungen eingesetzt werden, oder Thrombozytenaggregationshemmer wie ASS (siehe Abschnitt 2 "Bei Einnahme von {Produkt} mit anderen Arzneimitteln")."
+    Simplified: "Bitte sprechen Sie mit Ihrem Arzt, wenn Sie {Produkt} gleichzeitig mit Medikamenten einnehmen, die:
+    - das Risiko für Geschwüre oder Blutungen erhöhen können (z.B. Kortikosteroide zum Schlucken).
+    - Medikamente, die die Blutgerinnung hemmen (z.B. Warfarin).
+    - eine Aufnahme von Serotonin hemmen (selektive Serotonin-Wiederaufnahmehemmer). Diese werden unter anderem zur Behandlung von Depressionen eingesetzt.
+    - Thrombozytenaggregationshemmer wie ASS (weitere Informationen finden Sie unter Abschnitt 2 "Bei Einnahme von {Produkt} mit anderen Arzneimitteln")."
+
+    Example 4:
+    Original: "Für diese Patienten sowie für Patienten, die eine begleitende Therapie mit niedrig-dosierter Acetylsalicylsäure (ASS) oder anderen Arzneimitteln, die das Risiko für Magen-Darm-Erkrankungen erhöhen können, benötigen, sollte eine Kombinationstherapie mit Magenschleimhaut-schützenden Arzneimitteln (z.B. Misoprostol oder Protonenpumpenhemmer) in Betracht gezogen werden."
+    Simplified: "Bitte sprechen Sie mit Ihrem Arzt, wenn Sie:
+    - eine begleitende Therapie mit niedrig-dosierter Acetylsalicylsäure (ASS) benötigen.
+    - anderen Arzneimitteln einnehmen, die das Risiko für Magen-Darm-Erkrankungen erhöhen können (Beispiel).
+    Ihr Arzt wird mit Ihnen besprechen, ob Sie zusätzlich Arzneimittel (z.B. Misoprostol oder Protonenpumpenhemmer) einnehmen sollten, um Ihre Magenschleimhaut zu schützen."
+
+    Example 5:
+    Original: "Bei Schmerzen, die länger als 5 Tage anhalten, oder bei Fieber, das länger als 3 Tage anhält oder sich verschlimmert oder wenn weitere Symptome auftreten, sollte ein Arzt aufgesucht werden."
+    Simplified: "Bitte suchen Sie Ihren Arzt auf:
+    - wenn Ihre Schmerzen länger als 5 Tage anhalten,
+    - wenn Ihr Fieber länger als 3 Tage anhält oder sich verschlimmert,
+    - wenn weitere Anzeichen von Erkrankungen (Beispiel) auftreten."
+
+    Example 6:
+    Original: "Während der Schwangerschaft und Stillzeit darf die empfohlene Dosierung nicht überschritten werden, da eine Überdosierung die Blutversorgung des ungeborenen Kindes beeinträchtigen oder die Milchproduktion vermindern kann."
+    Simplified: "Bitte beachten Sie: Überschreiten Sie die Dosierung nicht wenn Sie schwanger sind oder stillen. Eine Überdosierung kann die Versorgung Ihres ungeborenen Kindes mit Blut beeinträchtigen und die Produktion von Muttermilch vermindern."
+
+    Example 7:
+    Original: "Anschließend sollten die Hände gewaschen werden, außer diese wären die zu behandelnde Stelle."
+    Simplified: "Bitte waschen Sie anschließend Ihre Hände. Dies gilt nicht, wenn Ihre Hände mit {Produkt} behandelt werden."
+
+    Example 8:
+    Original: "Von {Produkt} soll pro Tag nicht mehr eingenommen werden, als in der Dosierungsanleitung angegeben oder vom Arzt verordnet wurde."
+    Simplified: "Nehmen Sie von {Produkt} nicht mehr ein, als in der Dosierungsanleitung angegeben wird, oder wie von Ihrem Arzt verordnet. Weitere Information zur Dosierung finden Sie in Kapitel 3 dieser Packungsbeilage."
+
+    Example 9:
+    Original: "Bei gleichzeitiger Anwendung von Paracetamol und Zidovudin wird die Neigung zur Verminderung weißer Blutzellen (Neutropenie) verstärkt."
+    Simplified: "Wenn Sie Paracetamol gleichzeitig mit Zidovudin anwenden, können sich die Anzahl der weißen Blutzellen in Ihrem Blut vermindern."
+
+    Example 10:
+    Original: "Die Anwendung bei chronischem Schnupfen darf wegen der Gefahr des Schwundes der Nasenschleimhaut nur unter ärztlicher Kontrolle erfolgen."
+    Simplified: "Wenden Sie {Produkt} bei langanhaltendem Schnupfen bitte nur unter ärztlicher Kontrolle an. Ihre Nasenschleimhaut kann beschädigt werden."
 
     Now, simplify the following text while maintaining its length and all important information:
     """
@@ -115,7 +157,7 @@ def calculate_german_lix(text):
 def count_syllables(word):
     word = word.lower()
     count = 0
-    vowels = 'aeiouäöüy'
+    vowels = 'aeiouy'
     if word[0] in vowels:
         count += 1
     for index in range(1, len(word)):
@@ -132,20 +174,32 @@ def count_syllables(word):
 def analyze_text(text):
     """Analyze the readability of the given text."""
     metrics = {
-        "G-SMOG": calculate_gsmog(text),
-        "Wiener Sachtextformel": calculate_wiener_sachtextformel(text),
-        "German LIX": calculate_german_lix(text),
-        "Number of sentences": len(re.split(r'[.!?]+', text)),
-        "Number of words": len(re.findall(r'\w+', text)),
-        "Average words per sentence": len(re.findall(r'\w+', text)) / len(re.split(r'[.!?]+', text)),
+        "Flesch Reading Ease": textstat.flesch_reading_ease(text),
+        "Flesch-Kincaid Grade": textstat.flesch_kincaid_grade(text),
+        "Gunning Fog": textstat.gunning_fog(text),
+        "SMOG Index": textstat.smog_index(text),
+        "Coleman-Liau Index": textstat.coleman_liau_index(text),
+        "Automated Readability Index": textstat.automated_readability_index(text),
+        "Dale-Chall Readability Score": textstat.dale_chall_readability_score(text),
+        "Linsear Write Formula": textstat.linsear_write_formula(text),
+        "Text Standard": textstat.text_standard(text),
+        "Number of sentences": textstat.sentence_count(text),
+        "Number of words": textstat.lexicon_count(text),
+        "Number of complex words": textstat.difficult_words(text),
+        "Percentage of complex words": (textstat.difficult_words(text) / textstat.lexicon_count(text) * 100),
+        "Average words per sentence": textstat.avg_sentence_length(text),
+        "Average syllables per word": textstat.avg_syllables_per_word(text)
     }
     return metrics
 
 def is_text_readable(metrics):
     """Check if the text meets readability criteria."""
-    return (metrics["G-SMOG"] <= 6 and
-            metrics["Wiener Sachtextformel"] <= 6 and
-            metrics["German LIX"] <= 38)
+     return (60 <= metrics["Flesch Reading Ease"] <= 70 and
+            6 <= metrics["Flesch-Kincaid Grade"] <= 8 and
+            8 <= metrics["Gunning Fog"] <= 10 and
+            7 <= metrics["SMOG Index"] <= 9 and
+            7 <= metrics["Coleman-Liau Index"] <= 9 and
+            7 <= metrics["Automated Readability Index"] <= 9)
 
 def main():
     st.title("Medical Leaflet Simplifier")
@@ -185,6 +239,9 @@ def main():
             st.subheader("Original vs Simplified Text")
             col1, col2 = st.columns(2)
             with col1:
+                st.subheader("Original vs Simplified Text")
+            col1, col2 = st.columns(2)
+            with col1:
                 st.markdown("**Original Text**")
                 st.text_area("", value=original_text, height=400, disabled=True)
             with col2:
@@ -192,14 +249,12 @@ def main():
                 st.text_area("", value=simplified_text, height=400, disabled=True)
 
             st.subheader("Readability Metrics")
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("G-SMOG", f"{metrics['G-SMOG']:.2f}")
-            with col2:
-                st.metric("Wiener Sachtextformel", f"{metrics['Wiener Sachtextformel']:.2f}")
-            with col3:
-                st.metric("German LIX", f"{metrics['German LIX']:.2f}")
-
+            for metric in ['Flesch Reading Ease', 'Flesch-Kincaid Grade', 'Gunning Fog', 'SMOG Index', 
+                           'Coleman-Liau Index', 'Automated Readability Index']:
+                change = current_metrics[metric] - original_metrics[metric]
+                improvement = "improved" if change > 0 else "decreased"
+                st.write(f"{metric} {improvement} by {abs(change):.2f} points")
+                               
             with st.expander("Additional Statistics"):
                 st.write(f"Number of sentences: {metrics['Number of sentences']:.0f}")
                 st.write(f"Number of words: {metrics['Number of words']:.0f}")
