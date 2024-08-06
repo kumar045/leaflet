@@ -26,8 +26,8 @@ def simplify_text_with_claude(text, api_key, metrics=None):
     try:
         client = Anthropic(api_key=api_key)
         
-        base_prompt = """
-        {0} You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
+        base_prompt = f"""
+        {HUMAN_PROMPT} You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
 
         1. Maintain all legal and safety information, including specific instructions for special groups and overdose situations.
         2. Keep the text length similar to the original.
@@ -59,36 +59,27 @@ def simplify_text_with_claude(text, api_key, metrics=None):
 
         Now, please simplify the following text:
 
-        {1}
+        {text}
 
         Ensure your simplified version maintains all important information while being more accessible to readers with limited health literacy.
 
-        {2}
-        """.format(HUMAN_PROMPT, text, AI_PROMPT)
-        
+        {AI_PROMPT}
+        """
+
         if metrics:
-            metric_feedback = """
+            metric_feedback = f"""
             Current readability metrics:
-            - Flesch Reading Ease: {0:.2f} (target: 60-70)
-            - Flesch-Kincaid Grade: {1:.2f} (target: 6-8)
-            - Gunning Fog: {2:.2f} (target: 8-10)
-            - SMOG Index: {3:.2f} (target: 7-9)
-            - Coleman-Liau Index: {4:.2f} (target: 7-9)
-            - Automated Readability Index: {5:.2f} (target: 7-9)
+            - Flesch Reading Ease: {metrics['Flesch Reading Ease']:.2f} (target: 60-70)
+            - Flesch-Kincaid Grade: {metrics['Flesch-Kincaid Grade']:.2f} (target: 6-8)
+            - Gunning Fog: {metrics['Gunning Fog']:.2f} (target: 8-10)
+            - SMOG Index: {metrics['SMOG Index']:.2f} (target: 7-9)
+            - Coleman-Liau Index: {metrics['Coleman-Liau Index']:.2f} (target: 7-9)
+            - Automated Readability Index: {metrics['Automated Readability Index']:.2f} (target: 7-9)
             
             Please adjust the text to improve these metrics while maintaining accuracy and completeness.
 
-            {6} Using the metrics provided above, please simplify the text further to improve readability while maintaining all important information. {7}
-            """.format(
-                float(metrics['Flesch Reading Ease']),
-                float(metrics['Flesch-Kincaid Grade']),
-                float(metrics['Gunning Fog']),
-                float(metrics['SMOG Index']),
-                float(metrics['Coleman-Liau Index']),
-                float(metrics['Automated Readability Index']),
-                HUMAN_PROMPT,
-                AI_PROMPT
-            )
+            {HUMAN_PROMPT} Using the metrics provided above, please simplify the text further to improve readability while maintaining all important information. {AI_PROMPT}
+            """
             base_prompt += metric_feedback
 
         try:
