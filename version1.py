@@ -161,8 +161,8 @@ def main():
                         st.text_area("", value=simplified_text, height=400, disabled=True)
 
                     st.subheader("Readability Metrics")
-                    for metric, value in metrics.items():
-                        st.write(f"{metric}: {value:.2f}")
+                    # for metric, value in metrics.items():
+                    #     st.write(f"{metric}: {value:.2f}")
 
                     iteration = 1
                     max_iterations = 5
