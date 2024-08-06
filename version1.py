@@ -162,15 +162,6 @@ def main():
                 else:
                     final_metrics = analyze_text(simplified_text)
 
-                    st.subheader("Original vs Simplified Text")
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.markdown("**Original Text**")
-                        st.text_area("", value=original_text, height=400, disabled=True)
-                    with col2:
-                        st.markdown("**Simplified Text**")
-                        st.text_area("", value=simplified_text, height=400, disabled=True)
-
                     iteration = 1
                     max_iterations = 5
 
@@ -190,6 +181,17 @@ def main():
                         status_text.text("The simplified text meets the readability criteria.")
                     else:
                         status_text.text(f"The simplified text still doesn't meet all readability criteria after {max_iterations} iterations.")
+
+                    st.subheader("Final Results")
+                    
+                    st.subheader("Original vs Simplified Text")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown("**Original Text**")
+                        st.text_area("", value=original_text, height=400, disabled=True)
+                    with col2:
+                        st.markdown("**Simplified Text**")
+                        st.text_area("", value=simplified_text, height=400, disabled=True)
 
                     st.subheader("Metrics Comparison")
                     col1, col2 = st.columns(2)
