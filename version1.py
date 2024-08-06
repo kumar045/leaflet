@@ -131,8 +131,8 @@ def is_text_readable(metrics):
             7 <= metrics["Coleman-Liau Index"] <= 9 and
             7 <= metrics["Automated Readability Index"] <= 9)
 
-def display_metrics(metrics):
-    st.subheader("Readability Metrics")
+def display_metrics(metrics, title="Readability Metrics"):
+    st.subheader(title)
     for metric, value in metrics.items():
         if isinstance(value, (int, float)):
             st.write(f"{metric}: {value:.2f}")
@@ -154,12 +154,13 @@ def main():
                 st.write("Processing your file...")
                 original_text = extract_text_from_pdf(uploaded_file)
 
+                initial_metrics = analyze_text(original_text)
                 simplified_text = simplify_text_with_claude(original_text, api_key)
                 
                 if simplified_text.startswith("Error:"):
                     st.error(simplified_text)
                 else:
-                    metrics = analyze_text(simplified_text)
+                    final_metrics = analyze_text(simplified_text)
 
                     st.subheader("Original vs Simplified Text")
                     col1, col2 = st.columns(2)
@@ -170,27 +171,32 @@ def main():
                         st.markdown("**Simplified Text**")
                         st.text_area("", value=simplified_text, height=400, disabled=True)
 
-                    display_metrics(metrics)
-
                     iteration = 1
                     max_iterations = 5
 
                     progress_bar = st.progress(0)
                     status_text = st.empty()
 
-                    while not is_text_readable(metrics) and iteration < max_iterations:
+                    while not is_text_readable(final_metrics) and iteration < max_iterations:
                         status_text.text(f"Iteration {iteration}: Simplifying further...")
-                        simplified_text = simplify_text_with_claude(simplified_text, api_key, metrics)
-                        metrics = analyze_text(simplified_text)
+                        simplified_text = simplify_text_with_claude(simplified_text, api_key, final_metrics)
+                        final_metrics = analyze_text(simplified_text)
                         iteration += 1
                         progress_bar.progress(iteration / max_iterations)
 
                     progress_bar.progress(100)
                     
-                    if is_text_readable(metrics):
+                    if is_text_readable(final_metrics):
                         status_text.text("The simplified text meets the readability criteria.")
                     else:
                         status_text.text(f"The simplified text still doesn't meet all readability criteria after {max_iterations} iterations.")
+
+                    st.subheader("Metrics Comparison")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        display_metrics(initial_metrics, "Initial Metrics")
+                    with col2:
+                        display_metrics(final_metrics, "Final Metrics")
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
