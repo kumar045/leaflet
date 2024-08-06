@@ -22,7 +22,7 @@ def extract_text_from_pdf(pdf_file):
         return ""
 
 def simplify_text_with_claude(text, api_key, metrics=None):
-    st.write(text)
+    
     """Use Claude to simplify the given text, optionally using current metrics."""
     try:
         client = Anthropic(api_key=api_key)
@@ -82,7 +82,7 @@ def simplify_text_with_claude(text, api_key, metrics=None):
             {HUMAN_PROMPT} Using the metrics provided above, please simplify the text further to improve readability while maintaining all important information. {AI_PROMPT}
             """
             base_prompt += metric_feedback
-
+        st.write(base_prompt)
         try:
             response = client.completions.create(
                 model="claude-2.1",
