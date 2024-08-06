@@ -40,8 +40,9 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         model = initialize_gemini_client(api_key)
         chat_session = model.start_chat(history=[])
 
-        base_prompt = f"""
-        {HUMAN_PROMPT} You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
+        # Define the prompt directly
+        prompt = f"""
+        You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
 
         1. Maintain all legal and safety information, including specific instructions for special groups and overdose situations.
         2. Keep the text length similar to the original.
@@ -76,12 +77,9 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         {text}
 
         Ensure your simplified version maintains all important information while being more accessible to readers with limited health literacy.
-
-        {AI_PROMPT}
         """
 
-        chat_session.send_message(base_prompt)
-        response = chat_session.send_message(text)
+        response = chat_session.send_message(prompt)
         
         return response.text
     except Exception as e:
@@ -169,9 +167,6 @@ def main():
 
                     while not is_text_readable(final_metrics) and iteration < max_iterations:
                         status_text.text(f"Iteration {iteration}: Simplifying further...")
-                        st.write(f"Iteration {iteration} - Simplified Text Preview:")
-                        st.text_area("", value=simplified_text[:2000], height=200, disabled=True)  # Show a snippet of the text
-
                         simplified_text = simplify_text_with_gemini(simplified_text, api_key, final_metrics)
                         final_metrics = analyze_text(simplified_text)
                         iteration += 1
