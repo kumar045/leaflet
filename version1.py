@@ -25,12 +25,13 @@ def initialize_gemini_client(api_key):
     genai.configure(api_key=api_key)
     return genai.GenerativeModel(
         model_name="gemini-1.5-pro-exp-0801",  # Replace with your model name
-        generation_config={
-            "temperature": 1,
-            "top_p": 0.95,
-            "top_k": 64,
-            "max_output_tokens": 8192,
-            "response_mime_type": "text/plain",
+        # Create the model
+        generation_config = {
+          "temperature": 1,
+          "top_p": 0.95,
+          "top_k": 64,
+          "max_output_tokens": 8192,
+          "response_mime_type": "text/plain",
         }
     )
 
