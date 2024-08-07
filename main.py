@@ -3,6 +3,7 @@ import PyPDF2
 import google.generativeai as genai
 import textstat
 import logging
+import math
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -33,7 +34,7 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         model = initialize_gemini_client(api_key)
         chat_session = model.start_chat(history=[])
 
-        # Define the prompt directly with all examples
+        # Updated prompt with emphasis on formal "Sie" form
         prompt = f"""
         You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
 
@@ -53,9 +54,11 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
            - Wiener Sachtextformel: 6 or lower (range: 4-15)
            - German LIX: 38 or lower (range: 20-70)
 
+        7. IMPORTANT: Always use the formal "Sie" form in German, not the informal "du" form.
+
         Before simplifying, consider: What is the gender and cultural background of the target person for these instructions?
 
-        Here are some examples of how to simplify text:
+        Here are some examples of how to simplify text (note the use of "Sie" form):
 
         Example 1:
         Original: "Die Applikation erfolgt dreimal täglich mit den Mahlzeiten, um einen stabilen Blutglukosespiegel zu halten."
@@ -111,7 +114,7 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
 
         {text}
 
-        Ensure your simplified version maintains all important information while being more accessible to readers with limited health literacy.
+        Ensure your simplified version maintains all important information while being more accessible to readers with limited health literacy. Remember to consistently use the formal "Sie" form throughout the text.
         """
 
         response = chat_session.send_message(prompt)
@@ -121,9 +124,52 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
         logger.error("Error in simplify_text_with_gemini: %s", str(e))
         return f"Error: Unable to process the request. Please try again later. Details: {str(e)}"
 
+def count_sentences(text):
+    """Count the number of sentences in the text."""
+    return len([s for s in text.split('.') if s.strip()])
+
+def count_words(text):
+    """Count the number of words in the text."""
+    return len(text.split())
+
+def count_long_words(text):
+    """Count the number of words with more than 6 characters."""
+    return len([word for word in text.split() if len(word) > 6])
+
+def calculate_g_smog(text):
+    """Calculate the German SMOG (gSMOG) index."""
+    sentences = count_sentences(text)
+    long_words = count_long_words(text)
+    if sentences < 30:
+        return 0  # Not enough sentences for accurate calculation
+    return round(1.0430 * math.sqrt(30 * long_words / sentences) + 3.1291, 2)
+
+def calculate_lix(text):
+    """Calculate the LIX (Läsbarhetsindex) readability score."""
+    words = count_words(text)
+    sentences = count_sentences(text)
+    long_words = count_long_words(text)
+    if sentences == 0 or words == 0:
+        return 0
+    return round((words / sentences) + (100 * long_words / words), 2)
+
+def calculate_wsf(text):
+    """Calculate the Wiener Sachtextformel (WSF) readability score."""
+    words = count_words(text)
+    sentences = count_sentences(text)
+    words_with_3plus_syllables = len([word for word in text.split() if textstat.syllable_count(word) >= 3])
+    words_with_6plus_chars = count_long_words(text)
+    if sentences == 0 or words == 0:
+        return 0
+    ms = words_with_3plus_syllables / words * 100
+    sl = words / sentences
+    iw = words_with_6plus_chars / words * 100
+    return round(0.1935 * ms + 0.1672 * sl + 0.1297 * iw - 0.0327 * ms * sl - 0.875, 2)
+
 def analyze_text(text):
-    """Analyze the readability of the given text."""
+    """Analyze the readability of the given text using both English and German metrics."""
     metrics = {
+        # English metrics
         "Flesch Reading Ease": textstat.flesch_reading_ease(text),
         "Flesch-Kincaid Grade": textstat.flesch_kincaid_grade(text),
         "Gunning Fog": textstat.gunning_fog(text),
@@ -133,33 +179,60 @@ def analyze_text(text):
         "Dale-Chall Readability Score": textstat.dale_chall_readability_score(text),
         "Linsear Write Formula": textstat.linsear_write_formula(text),
         "Text Standard": textstat.text_standard(text),
+        
+        # German metrics
+        "G-SMOG": calculate_g_smog(text),
+        "LIX (Läsbarhetsindex)": calculate_lix(text),
+        "Wiener Sachtextformel (WSF)": calculate_wsf(text),
+        
+        # General statistics
         "Number of sentences": textstat.sentence_count(text),
         "Number of words": textstat.lexicon_count(text),
         "Number of complex words": textstat.difficult_words(text),
-        "Percentage of complex words": (textstat.difficult_words(text) / textstat.lexicon_count(text) * 100),
+        "Percentage of complex words": (textstat.difficult_words(text) / textstat.lexicon_count(text) * 100) if textstat.lexicon_count(text) > 0 else 0,
         "Average words per sentence": textstat.avg_sentence_length(text),
         "Average syllables per word": textstat.avg_syllables_per_word(text)
     }
     return metrics
 
 def is_text_readable(metrics):
-    """Check if the text meets readability criteria."""
+    """Check if the text meets readability criteria for both English and German metrics."""
     return (60 <= metrics["Flesch Reading Ease"] <= 70 and
             6 <= metrics["Flesch-Kincaid Grade"] <= 8 and
             8 <= metrics["Gunning Fog"] <= 10 and
             7 <= metrics["SMOG Index"] <= 9 and
             7 <= metrics["Coleman-Liau Index"] <= 9 and
-            7 <= metrics["Automated Readability Index"] <= 9)
+            7 <= metrics["Automated Readability Index"] <= 9 and
+            metrics["G-SMOG"] <= 6 and
+            metrics["LIX (Läsbarhetsindex)"] <= 38 and
+            metrics["Wiener Sachtextformel (WSF)"] <= 6)
 
 def display_metrics(metrics, title="Readability Metrics"):
     st.subheader(title)
-    for metric, value in metrics.items():
+    
+    # Display German metrics first
+    german_metrics = ["G-SMOG", "LIX (Läsbarhetsindex)", "Wiener Sachtextformel (WSF)"]
+    for metric in german_metrics:
+        st.write(f"{metric}: {metrics[metric]:.2f}")
+    
+    # Display English metrics
+    st.write("English Metrics:")
+    english_metrics = ["Flesch Reading Ease", "Flesch-Kincaid Grade", "Gunning Fog", "SMOG Index", 
+                       "Coleman-Liau Index", "Automated Readability Index", "Dale-Chall Readability Score", 
+                       "Linsear Write Formula", "Text Standard"]
+    for metric in english_metrics:
+        value = metrics[metric]
         if isinstance(value, (int, float)):
             st.write(f"{metric}: {value:.2f}")
-        elif isinstance(value, str):
-            st.write(f"{metric}: {value}")
         else:
             st.write(f"{metric}: {value}")
+    
+    # Display general statistics
+    st.write("General Statistics:")
+    general_stats = ["Number of sentences", "Number of words", "Number of complex words", 
+                     "Percentage of complex words", "Average words per sentence", "Average syllables per word"]
+    for metric in general_stats:
+        st.write(f"{metric}: {metrics[metric]:.2f}")
 
 def main():
     st.title("Medical Leaflet Simplifier")
