@@ -211,9 +211,13 @@ def display_metrics(metrics, title="Readability Metrics"):
     st.subheader(title)
     
     # Display German metrics first
+    st.write("German Metrics:")
     german_metrics = ["G-SMOG", "LIX (Läsbarhetsindex)", "Wiener Sachtextformel (WSF)"]
     for metric in german_metrics:
-        st.write(f"{metric}: {metrics[metric]:.2f}")
+        if metric in metrics:
+            st.write(f"{metric}: {metrics[metric]:.2f}")
+        else:
+            st.write(f"{metric}: Not calculated")
     
     # Display English metrics
     st.write("English Metrics:")
@@ -221,18 +225,24 @@ def display_metrics(metrics, title="Readability Metrics"):
                        "Coleman-Liau Index", "Automated Readability Index", "Dale-Chall Readability Score", 
                        "Linsear Write Formula", "Text Standard"]
     for metric in english_metrics:
-        value = metrics[metric]
-        if isinstance(value, (int, float)):
-            st.write(f"{metric}: {value:.2f}")
+        if metric in metrics:
+            value = metrics[metric]
+            if isinstance(value, (int, float)):
+                st.write(f"{metric}: {value:.2f}")
+            else:
+                st.write(f"{metric}: {value}")
         else:
-            st.write(f"{metric}: {value}")
+            st.write(f"{metric}: Not calculated")
     
     # Display general statistics
     st.write("General Statistics:")
     general_stats = ["Number of sentences", "Number of words", "Number of complex words", 
                      "Percentage of complex words", "Average words per sentence", "Average syllables per word"]
     for metric in general_stats:
-        st.write(f"{metric}: {metrics[metric]:.2f}")
+        if metric in metrics:
+            st.write(f"{metric}: {metrics[metric]:.2f}")
+        else:
+            st.write(f"{metric}: Not calculated")
 
 def main():
     st.title("Medical Leaflet Simplifier")
