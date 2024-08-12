@@ -195,16 +195,36 @@ def count_polysyllabic_words(text):
 
     return polysyllabic_word_count
 
-def calculate_g_smog(text):
-    polysyllabic_count = count_polysyllabic_words(text)
+# def calculate_g_smog(text):
+#     polysyllabic_count = count_polysyllabic_words(text)
     
-    if polysyllabic_count is None:
-        return None
+#     if polysyllabic_count is None:
+#         return None
     
-    # Calculate the SMOG score
-    smog_score = 3 + math.sqrt(polysyllabic_count)
-    return round(smog_score, 2)
+#     # Calculate the SMOG score
+#     smog_score = 3 + math.sqrt(polysyllabic_count)
+#     return round(smog_score, 2)
 
+def calculate_g_smog(text):
+    # Remove special characters and digits
+    text = re.sub(r'[^a-zA-Z\s.]', '', text)
+    
+    # Split into sentences
+    sentences = re.split(r'\.+', text)
+    sentences = [s.strip() for s in sentences if s.strip()]
+    number_of_sentences = len(sentences)
+    
+    # Count words with three or more syllables
+    words = text.split()
+    words_with_three_or_more_syllables = sum(1 for word in words if count_syllables(word) >= 3)
+    
+    # Calculate gSmog
+    if number_of_sentences == 0:
+        return 0  # Avoid division by zero
+    
+    gsmog = math.sqrt((words_with_three_or_more_syllables * 30) / number_of_sentences) - 2
+    return gsmog
+    
 def calculate_lix(text):
     """Calculate the LIX readability score."""
     words = re.findall(r'\w+', text.lower())
