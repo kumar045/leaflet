@@ -206,7 +206,7 @@ def analyze_text(text):
         # German metrics
         "G-SMOG": calculate_g_smog(text),
         "LIX (Läsbarhetsindex)": calculate_lix(text),
-        "Wiener Sachtextformel (WSF)": textstat.wiener_sachtextformel(text),
+        "Wiener Sachtextformel (WSF)": textstat.wiener_sachtextformel(text,1),
         
         # General statistics
         "Number of sentences": textstat.sentence_count(text),
