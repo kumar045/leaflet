@@ -128,6 +128,30 @@ def count_sentences(text):
     """Count the number of sentences in the text."""
     return len([s for s in text.split('.') if s.strip()])
 
+def count_syllables(word):
+    """Count the number of syllables in a word."""
+    word = word.lower()
+    count = 0
+    vowels = "aeiouy"
+    if word[0] in vowels:
+        count += 1
+    for index in range(1, len(word)):
+        if word[index] in vowels and word[index - 1] not in vowels:
+            count += 1
+    if word.endswith("e"):
+        count -= 1
+    if count == 0:
+        count += 1
+    return count
+    
+def calculate_reading_time(text):
+    """Calculate the estimated reading time in minutes."""
+    words = re.findall(r'\w+', text.lower())
+    word_count = len(words)
+    # Assuming average reading speed of 200 words per minute
+    reading_time = word_count / 200
+    return round(reading_time, 2)
+    
 def count_words(text):
     """Count the number of words in the text."""
     return len(text.split())
@@ -145,26 +169,22 @@ def calculate_g_smog(text):
     return round(1.0430 * math.sqrt(30 * long_words / sentences) + 3.1291, 2)
 
 def calculate_lix(text):
-    """Calculate the LIX (Läsbarhetsindex) readability score."""
-    words = count_words(text)
-    sentences = count_sentences(text)
-    long_words = count_long_words(text)
-    if sentences == 0 or words == 0:
+    """Calculate the LIX readability score."""
+    words = re.findall(r'\w+', text.lower())
+    sentences = re.findall(r'\w+[.!?]', text)
+    
+    total_words = len(words)
+    total_sentences = len(sentences)
+    long_words = sum(1 for word in words if len(word) > 6)
+    
+    if total_sentences == 0:
         return 0
-    return round((words / sentences) + (100 * long_words / words), 2)
-
-def calculate_wsf(text):
-    """Calculate the Wiener Sachtextformel (WSF) readability score."""
-    words = count_words(text)
-    sentences = count_sentences(text)
-    words_with_3plus_syllables = len([word for word in text.split() if textstat.syllable_count(word) >= 3])
-    words_with_6plus_chars = count_long_words(text)
-    if sentences == 0 or words == 0:
-        return 0
-    ms = words_with_3plus_syllables / words * 100
-    sl = words / sentences
-    iw = words_with_6plus_chars / words * 100
-    return round(0.1935 * ms + 0.1672 * sl + 0.1297 * iw - 0.0327 * ms * sl - 0.875, 2)
+    
+    average_sentence_length = total_words / total_sentences
+    percentage_long_words = (long_words / total_words) * 100
+    
+    lix = average_sentence_length + percentage_long_words
+    return round(lix, 2)
 
 def analyze_text(text):
     """Analyze the readability of the given text using both English and German metrics."""
@@ -179,11 +199,13 @@ def analyze_text(text):
         "Dale-Chall Readability Score": textstat.dale_chall_readability_score(text),
         "Linsear Write Formula": textstat.linsear_write_formula(text),
         "Text Standard": textstat.text_standard(text),
+        "Count_Syllables": count_syllables(text),
+        "Calculate_Reading_Time": calculate_reading_time(text),
         
         # German metrics
         "G-SMOG": calculate_g_smog(text),
         "LIX (Läsbarhetsindex)": calculate_lix(text),
-        "Wiener Sachtextformel (WSF)": calculate_wsf(text),
+        "Wiener Sachtextformel (WSF)": textstat.wiener_sachtextformel(text),
         
         # General statistics
         "Number of sentences": textstat.sentence_count(text),
@@ -223,7 +245,7 @@ def display_metrics(metrics, title="Readability Metrics"):
     st.write("English Metrics:")
     english_metrics = ["Flesch Reading Ease", "Flesch-Kincaid Grade", "Gunning Fog", "SMOG Index", 
                        "Coleman-Liau Index", "Automated Readability Index", "Dale-Chall Readability Score", 
-                       "Linsear Write Formula", "Text Standard"]
+                       "Linsear Write Formula", "Text Standard", "Count_Syllables", "Calculate_Reading_Time"]
     for metric in english_metrics:
         if metric in metrics:
             value = metrics[metric]
