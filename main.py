@@ -161,13 +161,49 @@ def count_long_words(text):
     """Count the number of words with more than 6 characters."""
     return len([word for word in text.split() if len(word) > 6])
 
+def count_polysyllabic_words(text):
+    # Split the text into sentences
+    sentences = re.split(r'[.!?]+', text)
+    
+    # Select 10 sentences from the beginning, middle, and end
+    num_sentences = len(sentences)
+    if num_sentences < 30:
+        print("Text must contain at least 30 sentences for a valid SMOG calculation.")
+        return None
+    
+    selected_sentences = []
+    
+    # Add sentences from the beginning
+    selected_sentences.extend(sentences[:10])
+    
+    # Add sentences from the middle
+    middle_index = num_sentences // 2
+    selected_sentences.extend(sentences[middle_index - 5:middle_index + 5])
+    
+    # Add sentences from the end
+    selected_sentences.extend(sentences[-10:])
+    
+    # Count polysyllabic words in the selected sentences
+    polysyllabic_word_count = 0
+    for sentence in selected_sentences:
+        words = re.findall(r'\b\w+\b', sentence)
+        for word in words:
+            if len(re.findall(r'[aeiouy]{2,}', word.lower())) >= 1:  # Check for vowel groups
+                syllable_count = sum(1 for char in word if char in "aeiouy")
+                if syllable_count >= 3:
+                    polysyllabic_word_count += 1
+
+    return polysyllabic_word_count
+
 def calculate_g_smog(text):
-    """Calculate the German SMOG (gSMOG) index."""
-    sentences = count_sentences(text)
-    long_words = count_long_words(text)
-    if sentences < 30:
-        return 0  # Not enough sentences for accurate calculation
-    return round(1.0430 * math.sqrt(30 * long_words / sentences) + 3.1291, 2)
+    polysyllabic_count = count_polysyllabic_words(text)
+    
+    if polysyllabic_count is None:
+        return None
+    
+    # Calculate the SMOG score
+    smog_score = 3 + math.sqrt(polysyllabic_count)
+    return round(smog_score, 2)
 
 def calculate_lix(text):
     """Calculate the LIX readability score."""
