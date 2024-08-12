@@ -4,6 +4,7 @@ import google.generativeai as genai
 import textstat
 import logging
 import math
+import re
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
