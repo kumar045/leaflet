@@ -128,7 +128,7 @@ Lange Sätze
 "Sie sollten daher während des 1 und 2 Schwangerschaftsdrittels {{Produkt}}  nur nach Rücksprache mit dem Arzt oder Zahnarzt und nur in der geringsten wirksamen Dosis und für die kürzestmögliche Zeit einnehmen, da es Hinweise auf ein erhöhtes Risiko von Fehlgeburten und Missbildungen gibt."
 
 **Vereinfachter Text:**
-"Nehmen Sie {{Produkt}} in den ersten 6 Monaten Ihrer Schwangerschaft  nur nach Rücksprache mit Ihrem Arzt ein. Bitte nehmen Sie nur die niedrigste Dosis ein. Achten Sie auch darauf {{Produkt}} nur für die kürzest mögliche Zeit einzunehmen. Bei falscher Einnahm kann es zu Fehlgeburten oder Missbildungen bei Ihrem Kind kommen. Weitere Informationen zur Einnahme finden Sie in Kapitel 3 dieser Packungsbeilage."
+"Nehmen Sie Produkt in den ersten 6 Monaten Ihrer Schwangerschaft  nur nach Rücksprache mit Ihrem Arzt ein. Bitte nehmen Sie nur die niedrigste Dosis ein. Achten Sie auch darauf {{Produkt}} nur für die kürzest mögliche Zeit einzunehmen. Bei falscher Einnahm kann es zu Fehlgeburten oder Missbildungen bei Ihrem Kind kommen. Weitere Informationen zur Einnahme finden Sie in Kapitel 3 dieser Packungsbeilage."
 
 Beispiel 3:
 Lange Sätze
@@ -176,7 +176,7 @@ Schachtelsätze
 "{{Produkt}}, das, nachdem es eingenommen wurde, Übelkeit verursachen kann, sollte nicht abgesetzt werden, da Nebenwirkungen nach wenigen Tagen verschwinden."
 
 **Vereinfachter Text:**
-"Das {{Produkt}} kann in den ersten Tagen der Einnahme Übelkeit verursachen. Setzen Sie das Arzneimittel nicht ab, da diese Nebenwirkung in der Regel nach wenigen Tagen verschwindet."
+"Das Produkt kann in den ersten Tagen der Einnahme Übelkeit verursachen. Setzen Sie das Arzneimittel nicht ab, da diese Nebenwirkung in der Regel nach wenigen Tagen verschwindet."
 
 
 Beispiel 7:
@@ -205,7 +205,7 @@ Nominalisierungen
 "Die Anwendung bei chronischem Schnupfen darf wegen der Gefahr des Schwundes der Nasenschleimhaut nur unter ärztlicher Kontrolle erfolgen."
 
 **Vereinfachter Text:**
-"Wenden Sie {{Produkt}} bei langanhaltendem Schnupfen bitte nur unter ärztlicher Kontrolle an. Ihre Nasenschleimhaut kann beschädigt werden."
+"Wenden Sie Produkt bei langanhaltendem Schnupfen bitte nur unter ärztlicher Kontrolle an. Ihre Nasenschleimhaut kann beschädigt werden."
 
 
 Beispiel 10:
@@ -232,7 +232,7 @@ Beispiel 12:
 Passivsätze
 
 **Originaltext:**
-"Von {{Produkt}} soll pro Tag nicht mehr eingenommen werden, als in der Dosierungsanleitung angegeben oder vom Arzt verordnet wurde."
+"Von Produkt soll pro Tag nicht mehr eingenommen werden, als in der Dosierungsanleitung angegeben oder vom Arzt verordnet wurde."
 
 **Vereinfachter Text:**
 "Nehmen Sie von {{Produkt}} nicht mehr ein, als in der Dosierungsanleitung angegeben wird, oder wie von Ihrem Arzt verordnet. Weitere Information zur Dosierung finden Sie in Kapitel 3 dieser Packungsbeilage." 
@@ -245,7 +245,7 @@ Partizipialkonstruktionen
 "Übergehend in die Muttermilch stellt {{Produkt}} für ein Neugeborenes eine Gefahr dar."
 
 **Vereinfachter Text:**
-"{{Produkt}} stellt für ein Neugeborenes eine Gefahr dar, weil es in die Muttermilch übergeht."
+"Produkt stellt für ein Neugeborenes eine Gefahr dar, weil es in die Muttermilch übergeht."
 
 
 Beispiel 14:
@@ -264,10 +264,10 @@ Beispiel 15:
 Fachbegriffe
 
 **Originaltext:**
-"{{Produkt}} darf bei einem apoplektischen Insult nicht eingenommen werden."
+"Produkt darf bei einem apoplektischen Insult nicht eingenommen werden."
 
 **Vereinfachter Text:**
-"{{Produkt}} darf nicht eingenommen werden bei einem plötzlich auftreten- den Schlaganfall (apoplektischer Insult)."
+"Produkt darf nicht eingenommen werden bei einem plötzlich auftreten- den Schlaganfall (apoplektischer Insult)."
 
 
 Beispiel 16:
@@ -286,7 +286,7 @@ Semantische Zusammenhänge
 "Wenn gastrointestinale Nebenwirkungen auftreten, dann ist das {{Produkt}} abzusetzen"
 
 **Vereinfachter Text:**
-"{{Produkt}} kann gastrointestinale Nebenwirkungen auslösen. Es muss dann abgesetzt werden."
+"Produkt kann gastrointestinale Nebenwirkungen auslösen. Es muss dann abgesetzt werden."
 
 Beispiel 17b:
 Semantische Zusammenhänge - Apellfunktion
@@ -295,7 +295,7 @@ Semantische Zusammenhänge - Apellfunktion
 "Wenn gastrointestinale Nebenwirkungen auftreten, dann ist das {{Produkt}} abzusetzen"
 
 **Vereinfachter Text:**
-"{{Produkt}} kann gastrointestinale Nebenwirkungen auslösen. Setzen Sie das Präparat ab, wenn Sie solche Nebenwirkungen spüren."
+"Produkt kann gastrointestinale Nebenwirkungen auslösen. Setzen Sie das Präparat ab, wenn Sie solche Nebenwirkungen spüren."
 
 
 Beispiel 18:
@@ -311,7 +311,7 @@ Quantifizierung
 
 ##Ausgabeformat:##
 
-##{{Produkt}}
+##Produkt
 
 ##Nebenwirkungen##
 
