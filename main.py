@@ -73,7 +73,7 @@ Unter einer Appellfunktion wird die persönliche Anrede unter Verwendung von Imp
 Die Anrede sollte kurz, konkret und anschaulich sein.
 
 - Semantische Zusammenhänge
-Um die Plausibilität bei der Beschreibung von Ursache und Wirkung für den Nutzer zu verbessern, muss eine semantische Relation aufgebaut werden muss. Dies wird erreicht, wenn zunächst die Ursache und erst danach die Wirkung genannt wird. Für den Abschnitt „Nebenwirkungen“ ist dies von besonderer Bedeutung, da es dem Anwender durch eine immer gleiche Satzstruktur leichter fällt, den Inhalt zu verstehen (und zu befolgen).
+Um die Plausibilität bei der Beschreibung von Ursache und Wirkung für den Nutzer zu verbessern, muss eine semantische Relation aufgebaut werden muss. Dies wird erreicht, wenn zunächst die Ursache und erst danach die Wirkung genannt wird. Für den Abschnitt „Nebenwirkungen" ist dies von besonderer Bedeutung, da es dem Anwender durch eine immer gleiche Satzstruktur leichter fällt, den Inhalt zu verstehen (und zu befolgen).
 Generell werden Formulierungen verständlicher, wenn der Satzaufbau folgendermaßen konstruiert wird:
 A kann B verursachen
 A kann B bewirken
@@ -125,23 +125,23 @@ Beispiel 2:
 Lange Sätze
 
 **Originaltext:**
-"Sie sollten daher während des 1 und 2 Schwangerschaftsdrittels {Produkt}  nur nach Rücksprache mit dem Arzt oder Zahnarzt und nur in der geringsten wirksamen Dosis und für die kürzestmögliche Zeit einnehmen, da es Hinweise auf ein erhöhtes Risiko von Fehlgeburten und Missbildungen gibt."
+"Sie sollten daher während des 1 und 2 Schwangerschaftsdrittels {{Produkt}}  nur nach Rücksprache mit dem Arzt oder Zahnarzt und nur in der geringsten wirksamen Dosis und für die kürzestmögliche Zeit einnehmen, da es Hinweise auf ein erhöhtes Risiko von Fehlgeburten und Missbildungen gibt."
 
 **Vereinfachter Text:**
-"Nehmen Sie {Produkt} in den ersten 6 Monaten Ihrer Schwangerschaft  nur nach Rücksprache mit Ihrem Arzt ein. Bitte nehmen Sie nur die niedrigste Dosis ein. Achten Sie auch darauf {Produkt} nur für die kürzest mögliche Zeit einzunehmen. Bei falscher Einnahm kann es zu Fehlgeburten oder Missbildungen bei Ihrem Kind kommen. Weitere Informationen zur Einnahme finden Sie in Kapitel 3 dieser Packungsbeilage."
+"Nehmen Sie {{Produkt}} in den ersten 6 Monaten Ihrer Schwangerschaft  nur nach Rücksprache mit Ihrem Arzt ein. Bitte nehmen Sie nur die niedrigste Dosis ein. Achten Sie auch darauf {{Produkt}} nur für die kürzest mögliche Zeit einzunehmen. Bei falscher Einnahm kann es zu Fehlgeburten oder Missbildungen bei Ihrem Kind kommen. Weitere Informationen zur Einnahme finden Sie in Kapitel 3 dieser Packungsbeilage."
 
 Beispiel 3:
 Lange Sätze
 
 **Originaltext:**
-"Vorsicht ist angeraten, wenn Sie gleichzeitig Arzneimittel erhalten, die das Risiko für Geschwüre oder Blutungen erhöhen können, wie z.B. orale Kortikosteroide, blutgerinnungshemmende Medikamente wie Warfarin, selektive Serotonin-Wiederaufnahmehemmer, die unter anderem zur Behandlung von depressiven Verstimmungen eingesetzt werden, oder Thrombozytenaggregationshemmer wie ASS (siehe Abschnitt 2 "Bei Einnahme von {Produkt} mit anderen Arzneimitteln")."
+"Vorsicht ist angeraten, wenn Sie gleichzeitig Arzneimittel erhalten, die das Risiko für Geschwüre oder Blutungen erhöhen können, wie z.B. orale Kortikosteroide, blutgerinnungshemmende Medikamente wie Warfarin, selektive Serotonin-Wiederaufnahmehemmer, die unter anderem zur Behandlung von depressiven Verstimmungen eingesetzt werden, oder Thrombozytenaggregationshemmer wie ASS (siehe Abschnitt 2 "Bei Einnahme von {{Produkt}} mit anderen Arzneimitteln")."
 
 **Vereinfachter Text:**
-"Bitte sprechen Sie mit Ihrem Arzt, wenn Sie {Produkt} gleichzeitig mit Medikamenten einnehmen, die:
+"Bitte sprechen Sie mit Ihrem Arzt, wenn Sie {{Produkt}} gleichzeitig mit Medikamenten einnehmen, die:
 - das Risiko für Geschwüre oder Blutungen erhöhen können (z.B. Kortikosteroide zum Schlucken).
 - Medikamente, die die Blutgerinnung hemmen (z.B. Warfarin).
 - eine Aufnahme von Serotonin hemmen (selektive SerotoninWiederaufnahmehemmer). Diese werden unter anderem zur Behandlung von Depressionen eingesetzt.
-- Thrombozytenaggregationshemmer wie ASS (weitere Informationen finden Sie unter Abschnitt 2 "Bei Einnahme von {Produkt} mit anderen Arzneimitteln")."
+- Thrombozytenaggregationshemmer wie ASS (weitere Informationen finden Sie unter Abschnitt 2 "Bei Einnahme von {{Produkt}} mit anderen Arzneimitteln")."
 
 Beispiel 4:
 Schachtelsätze
@@ -173,10 +173,10 @@ Beispiel 6:
 Schachtelsätze
 
 **Originaltext:**
-"{Produkt}, das, nachdem es eingenommen wurde, Übelkeit verursachen kann, sollte nicht abgesetzt werden, da Nebenwirkungen nach wenigen Tagen verschwinden."
+"{{Produkt}}, das, nachdem es eingenommen wurde, Übelkeit verursachen kann, sollte nicht abgesetzt werden, da Nebenwirkungen nach wenigen Tagen verschwinden."
 
 **Vereinfachter Text:**
-"Das {Produkt} kann in den ersten Tagen der Einnahme Übelkeit verursachen. Setzen Sie das Arzneimittel nicht ab, da diese Nebenwirkung in der Regel nach wenigen Tagen verschwindet."
+"Das {{Produkt}} kann in den ersten Tagen der Einnahme Übelkeit verursachen. Setzen Sie das Arzneimittel nicht ab, da diese Nebenwirkung in der Regel nach wenigen Tagen verschwindet."
 
 
 Beispiel 7:
@@ -205,7 +205,7 @@ Nominalisierungen
 "Die Anwendung bei chronischem Schnupfen darf wegen der Gefahr des Schwundes der Nasenschleimhaut nur unter ärztlicher Kontrolle erfolgen."
 
 **Vereinfachter Text:**
-"Wenden Sie {Produkt} bei langanhaltendem Schnupfen bitte nur unter ärztlicher Kontrolle an. Ihre Nasenschleimhaut kann beschädigt werden."
+"Wenden Sie {{Produkt}} bei langanhaltendem Schnupfen bitte nur unter ärztlicher Kontrolle an. Ihre Nasenschleimhaut kann beschädigt werden."
 
 
 Beispiel 10:
@@ -220,32 +220,32 @@ Passivsätze
 
 Beispiel 11:
 Passivsätze
- 
+
 **Originaltext:**
 "Anschließend sollten die Hände gewaschen werden, außer diese wären die zu behandelnde Stelle."
 
 **Vereinfachter Text:**
-"Bitte waschen Sie anschließend Ihre Hände. Dies gilt nicht, wenn Ihre Hände mit {Produkt} behandelt werden."
+"Bitte waschen Sie anschließend Ihre Hände. Dies gilt nicht, wenn Ihre Hände mit {{Produkt}} behandelt werden."
 
 
 Beispiel 12:
 Passivsätze
 
 **Originaltext:**
-"Von {Produkt} soll pro Tag nicht mehr eingenommen werden, als in der Dosierungsanleitung angegeben oder vom Arzt verordnet wurde."
+"Von {{Produkt}} soll pro Tag nicht mehr eingenommen werden, als in der Dosierungsanleitung angegeben oder vom Arzt verordnet wurde."
 
 **Vereinfachter Text:**
-"Nehmen Sie von {Produkt} nicht mehr ein, als in der Dosierungsanleitung angegeben wird, oder wie von Ihrem Arzt verordnet. Weitere Information zur Dosierung finden Sie in Kapitel 3 dieser Packungsbeilage." 
+"Nehmen Sie von {{Produkt}} nicht mehr ein, als in der Dosierungsanleitung angegeben wird, oder wie von Ihrem Arzt verordnet. Weitere Information zur Dosierung finden Sie in Kapitel 3 dieser Packungsbeilage." 
 
 
 Beispiel 13:
 Partizipialkonstruktionen
 
 **Originaltext:**
-"Übergehend in die Muttermilch stellt {Produkt} für ein Neugeborenes eine Gefahr dar."
+"Übergehend in die Muttermilch stellt {{Produkt}} für ein Neugeborenes eine Gefahr dar."
 
 **Vereinfachter Text:**
-"{Produkt} stellt für ein Neugeborenes eine Gefahr dar, weil es in die Muttermilch übergeht."
+"{{Produkt}} stellt für ein Neugeborenes eine Gefahr dar, weil es in die Muttermilch übergeht."
 
 
 Beispiel 14:
@@ -264,10 +264,10 @@ Beispiel 15:
 Fachbegriffe
 
 **Originaltext:**
-"{Produkt} darf bei einem apoplektischen Insult nicht eingenommen werden."
+"{{Produkt}} darf bei einem apoplektischen Insult nicht eingenommen werden."
 
 **Vereinfachter Text:**
-"{Produkt} darf nicht eingenommen werden bei einem plötzlich auftreten- den Schlaganfall (apoplektischer Insult)."
+"{{Produkt}} darf nicht eingenommen werden bei einem plötzlich auftreten- den Schlaganfall (apoplektischer Insult)."
 
 
 Beispiel 16:
@@ -283,19 +283,19 @@ Beispiel 17a:
 Semantische Zusammenhänge
 
 **Originaltext:**
-"Wenn gastrointestinale Nebenwirkungen auftreten, dann ist das {Produkt} abzusetzen"
+"Wenn gastrointestinale Nebenwirkungen auftreten, dann ist das {{Produkt}} abzusetzen"
 
 **Vereinfachter Text:**
-"{Produkt} kann gastrointestinale Nebenwirkungen auslösen. Es muss dann abgesetzt werden."
+"{{Produkt}} kann gastrointestinale Nebenwirkungen auslösen. Es muss dann abgesetzt werden."
 
 Beispiel 17b:
 Semantische Zusammenhänge - Apellfunktion
 
 **Originaltext:**
-"Wenn gastrointestinale Nebenwirkungen auftreten, dann ist das {Produkt} abzusetzen"
+"Wenn gastrointestinale Nebenwirkungen auftreten, dann ist das {{Produkt}} abzusetzen"
 
 **Vereinfachter Text:**
-"{Produkt} kann gastrointestinale Nebenwirkungen auslösen. Setzen Sie das Präparat ab, wenn Sie solche Nebenwirkungen spüren."
+"{{Produkt}} kann gastrointestinale Nebenwirkungen auslösen. Setzen Sie das Präparat ab, wenn Sie solche Nebenwirkungen spüren."
 
 
 Beispiel 18:
@@ -311,7 +311,7 @@ Quantifizierung
 
 ##Ausgabeformat:##
 
-##{Produkt}
+##{{Produkt}}
 
 ##Nebenwirkungen##
 
@@ -333,7 +333,7 @@ Stelle sicher, dass alle rechtlichen und Sicherheitsinformationen in der vereinf
         """
 
         response = chat_session.send_message(prompt)
-        
+
         return response.text
     except Exception as e:
         logger.error("Error in simplify_text_with_gemini: %s", str(e))
@@ -358,7 +358,7 @@ def count_syllables(word):
     if count == 0:
         count += 1
     return count
-    
+
 def calculate_reading_time(text):
     """Calculate the estimated reading time in minutes."""
     words = re.findall(r'\w+', text.lower())
@@ -366,7 +366,7 @@ def calculate_reading_time(text):
     # Assuming average reading speed of 200 words per minute
     reading_time = word_count / 200
     return round(reading_time, 2)
-    
+
 def count_words(text):
     """Count the number of words in the text."""
     return len(text.split())
@@ -378,25 +378,25 @@ def count_long_words(text):
 def count_polysyllabic_words(text):
     # Split the text into sentences
     sentences = re.split(r'[.!?]+', text)
-    
+
     # Select 10 sentences from the beginning, middle, and end
     num_sentences = len(sentences)
     if num_sentences < 30:
         print("Text must contain at least 30 sentences for a valid SMOG calculation.")
         return None
-    
+
     selected_sentences = []
-    
+
     # Add sentences from the beginning
     selected_sentences.extend(sentences[:10])
-    
+
     # Add sentences from the middle
     middle_index = num_sentences // 2
     selected_sentences.extend(sentences[middle_index - 5:middle_index + 5])
-    
+
     # Add sentences from the end
     selected_sentences.extend(sentences[-10:])
-    
+
     # Count polysyllabic words in the selected sentences
     polysyllabic_word_count = 0
     for sentence in selected_sentences:
@@ -409,51 +409,41 @@ def count_polysyllabic_words(text):
 
     return polysyllabic_word_count
 
-# def calculate_g_smog(text):
-#     polysyllabic_count = count_polysyllabic_words(text)
-    
-#     if polysyllabic_count is None:
-#         return None
-    
-#     # Calculate the SMOG score
-#     smog_score = 3 + math.sqrt(polysyllabic_count)
-#     return round(smog_score, 2)
-
 def calculate_g_smog(text):
     # Remove special characters and digits
     text = re.sub(r'[^a-zA-Z\s.]', '', text)
-    
+
     # Split into sentences
     sentences = re.split(r'\.+', text)
     sentences = [s.strip() for s in sentences if s.strip()]
     number_of_sentences = len(sentences)
-    
+
     # Count words with three or more syllables
     words = text.split()
     words_with_three_or_more_syllables = sum(1 for word in words if count_syllables(word) >= 3)
-    
+
     # Calculate gSmog
     if number_of_sentences == 0:
         return 0  # Avoid division by zero
-    
+
     gsmog = math.sqrt((words_with_three_or_more_syllables * 30) / number_of_sentences) - 2
     return gsmog
-    
+
 def calculate_lix(text):
     """Calculate the LIX readability score."""
     words = re.findall(r'\w+', text.lower())
     sentences = re.findall(r'\w+[.!?]', text)
-    
+
     total_words = len(words)
     total_sentences = len(sentences)
     long_words = sum(1 for word in words if len(word) > 6)
-    
+
     if total_sentences == 0:
         return 0
-    
+
     average_sentence_length = total_words / total_sentences
     percentage_long_words = (long_words / total_words) * 100
-    
+
     lix = average_sentence_length + percentage_long_words
     return round(lix, 2)
 
@@ -472,12 +462,12 @@ def analyze_text(text):
         "Text Standard": textstat.text_standard(text),
         "Count_Syllables": count_syllables(text),
         "Calculate_Reading_Time": calculate_reading_time(text),
-        
+
         # German metrics
         "G-SMOG": calculate_g_smog(text),
         "LIX (Läsbarhetsindex)": calculate_lix(text),
         "Wiener Sachtextformel (WSF)": textstat.wiener_sachtextformel(text,1),
-        
+
         # General statistics
         "Number of sentences": textstat.sentence_count(text),
         "Number of words": textstat.lexicon_count(text),
@@ -502,7 +492,7 @@ def is_text_readable(metrics):
 
 def display_metrics(metrics, title="Readability Metrics"):
     st.subheader(title)
-    
+
     # Display German metrics first
     st.write("German Metrics:")
     german_metrics = ["G-SMOG", "LIX (Läsbarhetsindex)", "Wiener Sachtextformel (WSF)"]
@@ -511,7 +501,7 @@ def display_metrics(metrics, title="Readability Metrics"):
             st.write(f"{metric}: {metrics[metric]:.2f}")
         else:
             st.write(f"{metric}: Not calculated")
-    
+
     # Display English metrics
     st.write("English Metrics:")
     english_metrics = ["Flesch Reading Ease", "Flesch-Kincaid Grade", "Gunning Fog", "SMOG Index", 
@@ -526,7 +516,7 @@ def display_metrics(metrics, title="Readability Metrics"):
                 st.write(f"{metric}: {value}")
         else:
             st.write(f"{metric}: Not calculated")
-    
+
     # Display general statistics
     st.write("General Statistics:")
     general_stats = ["Number of sentences", "Number of words", "Number of complex words", 
@@ -558,13 +548,13 @@ def main():
                 st.text_area("", value=original_text, height=200, disabled=True)
 
                 initial_metrics = analyze_text(original_text)
-                
+
                 st.subheader("Initial Metrics")
                 display_metrics(initial_metrics)
 
                 st.write("Simplifying text...")
                 simplified_text = simplify_text_with_gemini(original_text, api_key)
-                
+
                 if simplified_text.startswith("Error:"):
                     st.error(simplified_text)
                 else:
@@ -584,14 +574,14 @@ def main():
                         progress_bar.progress(iteration / max_iterations)
 
                     progress_bar.progress(100)
-                    
+
                     if is_text_readable(final_metrics):
                         status_text.text("The simplified text meets the readability criteria.")
                     else:
                         status_text.text(f"The simplified text still doesn't meet all readability criteria after {max_iterations} iterations.")
 
                     st.subheader("Final Results")
-                    
+
                     st.subheader("Original vs Simplified Text")
                     col1, col2 = st.columns(2)
                     with col1:
