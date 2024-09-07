@@ -8,6 +8,10 @@ import re
 import spacy
 import numpy as np
 import pandas as pd
+from spacy.cli import download
+
+# Download the German model
+download("de_core_news_sm")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -16,7 +20,7 @@ logger = logging.getLogger(__name__)
 # Load spaCy model
 @st.cache_resource
 def load_spacy_model():
-    return spacy.load("en_core_web_sm")
+    return spacy.load("de_core_news_sm")
 
 nlp = load_spacy_model()
 
