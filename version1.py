@@ -44,7 +44,7 @@ def initialize_gemini_client(api_key):
     return genai.GenerativeModel(model_name="gemini-1.5-pro-exp-0801")
 
 def simplify_text_with_gemini(text, api_key, metrics=None):
-    """Use Google Gemini to simplify the given text, optionally using current metrics."""
+    """Use Google Gemini to simplify the given German text, optionally using current metrics."""
     try:
         model = initialize_gemini_client(api_key)
         chat_session = model.start_chat(history=[])
@@ -77,7 +77,7 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
 
         Berücksichtigen Sie unbedingt Hinweise zur Anwendung während der Schwangerschaft und Stillzeit sowie zu Maßnahmen bei Überdosierung.
 
-        Bitte vereinfachen Sie den folgenden Text:
+        Bitte vereinfachen Sie den folgenden deutschen Text:
 
         {text}
 
@@ -131,7 +131,7 @@ def coverage_accuracy_assessment(original_text, simplified_text):
     }
 
 def verify_medical_entities(original_text, simplified_text):
-    """Verify that medical entities in the original text are preserved in the simplified text."""
+    """Verify that medical entities in the original German text are preserved in the simplified text."""
     original_doc = nlp(original_text)
     simplified_doc = nlp(simplified_text)
 
@@ -150,7 +150,7 @@ def verify_medical_entities(original_text, simplified_text):
     }
 
 def self_consistency_check(original_text, simplified_text, api_key, num_versions=3):
-    """Generate multiple simplified versions and compare them for consistency."""
+    """Generate multiple simplified versions of German text and compare them for consistency."""
     versions = [simplify_text_with_gemini(original_text, api_key) for _ in range(num_versions)]
     versions.append(simplified_text)
 
@@ -165,7 +165,7 @@ def self_consistency_check(original_text, simplified_text, api_key, num_versions
     }
 
 def citation_accuracy_check(original_text, simplified_text):
-    """Check if citations in the original text are preserved in the simplified text."""
+    """Check if citations in the original German text are preserved in the simplified text."""
     original_citations = re.findall(r'\[(\d+)\]', original_text)
     simplified_citations = re.findall(r'\[(\d+)\]', simplified_text)
 
@@ -179,24 +179,24 @@ def citation_accuracy_check(original_text, simplified_text):
     }
 
 def implement_safeguards(simplified_text):
-    """Implement safeguards and guardrails to ensure critical information is preserved."""
+    """Implement safeguards and guardrails to ensure critical information is preserved in German text."""
     safeguards = [
         ("dosage", r"\b\d+\s*(mg|g|ml)\b"),
-        ("warning", r"\b(warning|caution|alert)\b"),
-        ("side[- ]effects?", r"\bside[- ]effects?\b"),
+        ("warning", r"\b(Warnung|Vorsicht|Achtung)\b"),
+        ("side[- ]effects?", r"\b(Nebenwirkungen?|Nebenwirkung)\b"),
     ]
 
     results = {}
     for name, pattern in safeguards:
         if re.search(pattern, simplified_text, re.IGNORECASE):
-            results[name] = "Present"
+            results[name] = "Vorhanden"
         else:
-            results[name] = "Missing"
+            results[name] = "Fehlend"
 
     return results
 
 def two_phase_approach(original_text, simplified_text):
-    """Implement a two-phase approach inspired by the KnowHalu framework."""
+    """Implement a two-phase approach inspired by the KnowHalu framework for German text."""
     original_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', original_text))
     simplified_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', simplified_text))
     
@@ -213,7 +213,7 @@ def two_phase_approach(original_text, simplified_text):
     }
 
 def factuality_faithfulness_check(original_text, simplified_text):
-    """Check factuality and faithfulness of the simplified text."""
+    """Check factuality and faithfulness of the simplified German text."""
     original_doc = nlp(original_text)
     simplified_doc = nlp(simplified_text)
 
@@ -236,10 +236,10 @@ def factuality_faithfulness_check(original_text, simplified_text):
     }
 
 def count_syllables(word):
-    """Count the number of syllables in a word."""
+    """Count the number of syllables in a German word."""
     word = word.lower()
     count = 0
-    vowels = "aeiouy"
+    vowels = "aeiouäöüy"
     if word[0] in vowels:
         count += 1
     for index in range(1, len(word)):
@@ -288,6 +288,40 @@ def calculate_german_metrics(text):
         'Total sentences': total_sentences
     }
 
+def constrained_reasoning(original_text, simplified_text, api_key):
+    """Perform constrained reasoning to identify potential hallucinations in German text."""
+    try:
+        model = initialize_gemini_client(api_key)
+        chat_session = model.start_chat(history=[])
+
+        prompt = f"""
+        Als KI-Assistent für medizinische Texte ist Ihre Aufgabe, potenzielle Halluzinationen in einer vereinfachten Version eines deutschen medizinischen Dokuments zu identifizieren. Vergleichen Sie den Originaltext mit der vereinfachten Version und markieren Sie alle Informationen in der vereinfachten Version, die:
+
+        1. Im Originaltext nicht vorkommen
+        2. Dem Originaltext widersprechen
+        3. Wichtige Informationen aus dem Originaltext auslassen
+
+        Originaltext:
+        {original_text}
+
+        Vereinfachte Version:
+        {simplified_text}
+
+        Bitte geben Sie Ihre Analyse in folgendem Format aus:
+        1. [Potenzielle Halluzination]: [Erklärung]
+        2. [Potenzielle Halluzination]: [Erklärung]
+        ...
+
+        Wenn keine Halluzinationen gefunden wurden, geben Sie "Keine Halluzinationen gefunden" aus.
+        """
+
+        response = chat_session.send_message(prompt)
+
+        return response.text
+    except Exception as e:
+        logger.error(f"Fehler in constrained_reasoning: {str(e)}")
+        return f"Fehler: Anfrage konnte nicht verarbeitet werden. Bitte versuchen Sie es später erneut. Details: {str(e)}"
+
 def simplify_document(document_content, api_key, max_iterations=1):
     initial_metrics = calculate_german_metrics(document_content)
     simplified_content = document_content
@@ -310,7 +344,9 @@ def simplify_document(document_content, api_key, max_iterations=1):
     check_results = factuality_faithfulness_check(document_content, simplified_content)
     final_metrics = calculate_german_metrics(simplified_content)
     
-    return simplified_content, check_results, iterations, initial_metrics, final_metrics
+    constrained_reasoning_results = constrained_reasoning(document_content, simplified_content, api_key)
+    
+    return simplified_content, check_results, iterations, initial_metrics, final_metrics, constrained_reasoning_results
 
 def display_metrics_comparison(initial_metrics, final_metrics):
     df = pd.DataFrame({
@@ -327,13 +363,13 @@ def main():
 
     api_key = st.text_input("Enter your Google API Key", type="password")
     
-    uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
+    uploaded_file = st.file_uploader("Choose a German PDF file", type="pdf")
     
     if uploaded_file is not None and api_key:
         document_content = extract_text_from_pdf(uploaded_file)
 
         if st.button("Simplify Document"):
-            simplified_content, check_results, iterations, initial_metrics, final_metrics = simplify_document(document_content, api_key)
+            simplified_content, check_results, iterations, initial_metrics, final_metrics, constrained_reasoning_results = simplify_document(document_content, api_key)
 
             st.subheader("Simplification Iterations")
             for iteration in iterations:
@@ -345,9 +381,9 @@ def main():
             editable_text = st.text_area("Edit the simplified text if needed:", simplified_content, height=300)
 
             if st.button("Save Edited Text"):
-                with open("simplified_document.txt", "w", encoding="utf-8") as f:
+                with open("simplified_german_document.txt", "w", encoding="utf-8") as f:
                     f.write(editable_text)
-                st.success("Simplified text saved to 'simplified_document.txt'")
+                st.success("Simplified text saved to 'simplified_german_document.txt'")
 
             st.subheader("Metrics Comparison")
             comparison_df = display_metrics_comparison(initial_metrics, final_metrics)
@@ -355,6 +391,9 @@ def main():
 
             st.subheader("Hallucination Check Results")
             st.write(check_results)
+
+            st.subheader("Constrained Reasoning Results")
+            st.write(constrained_reasoning_results)
 
             st.subheader("Additional Checks")
             coverage_results = coverage_accuracy_assessment(document_content, simplified_content)
