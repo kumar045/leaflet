@@ -358,15 +358,35 @@ Stelle sicher, dass alle rechtlichen und Sicherheitsinformationen in der vereinf
         logger.error("Error in simplify_text_with_gemini: %s", str(e))
         return f"Error: Unable to process the request. Please try again later. Details: {str(e)}"
 
-def get_embeddings(texts):
+def get_embeddings(texts, max_chunk_size=9000):
+    """Get embeddings for a list of texts, splitting long texts into chunks."""
     embeddings = []
     for text in texts:
-        result = genai.embed_content(
-            model="models/text-embedding-004",
-            content=text,
-            task_type="semantic_similarity"
-        )
-        embeddings.append(result['embedding'])
+        if len(text) <= max_chunk_size:
+            chunks = [text]
+        else:
+            chunks = [text[i:i+max_chunk_size] for i in range(0, len(text), max_chunk_size)]
+        
+        chunk_embeddings = []
+        for chunk in chunks:
+            try:
+                result = genai.embed_content(
+                    model="models/text-embedding-004",
+                    content=chunk,
+                    task_type="semantic_similarity"
+                )
+                chunk_embeddings.append(result['embedding'])
+            except Exception as e:
+                logger.error(f"Error getting embedding for chunk: {str(e)}")
+                continue
+        
+        if chunk_embeddings:
+            # Average the embeddings if there were multiple chunks
+            avg_embedding = np.mean(chunk_embeddings, axis=0)
+            embeddings.append(avg_embedding)
+        else:
+            logger.warning(f"No valid embeddings generated for text: {text[:100]}...")
+    
     return embeddings
 
 def cosine_similarity(embeddings1, embeddings2):
