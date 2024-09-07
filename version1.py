@@ -106,15 +106,39 @@ def get_embeddings(texts):
         if not text.strip():
             continue  # Skip empty texts
         try:
-            result = genai.embed_content(
-                model="models/embedding-001",
-                content=text,
-                task_type="retrieval_document"
-            )
-            embeddings.append(result['embedding'])
+            # Chunk the text if it's too long
+            chunks = [text[i:i+5000] for i in range(0, len(text), 5000)]
+            chunk_embeddings = []
+            for chunk in chunks:
+                result = genai.embed_content(
+                    model="models/embedding-001",
+                    content=chunk,
+                    task_type="retrieval_document"
+                )
+                chunk_embeddings.append(result['embedding'])
+            # Average the embeddings if there were multiple chunks
+            if chunk_embeddings:
+                embeddings.append(np.mean(chunk_embeddings, axis=0))
         except Exception as e:
             logger.error(f"Error getting embedding for text: {str(e)}")
     return embeddings
+
+def two_phase_approach(original_text, simplified_text):
+    """Implement a two-phase approach inspired by the KnowHalu framework for German text."""
+    original_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', original_text))
+    simplified_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', simplified_text))
+    
+    non_fabrication_score = len(original_key_phrases.intersection(simplified_key_phrases)) / len(original_key_phrases) if original_key_phrases else 1.0
+
+    original_entities = set(ent.text for ent in nlp(original_text).ents)
+    simplified_entities = set(ent.text for ent in nlp(simplified_text).ents)
+    
+    factual_accuracy_score = len(original_entities.intersection(simplified_entities)) / len(original_entities) if original_entities else 1.0
+
+    return {
+        'non_fabrication_score': non_fabrication_score,
+        'factual_accuracy_score': factual_accuracy_score
+    }
     
 def cosine_similarity(embeddings1, embeddings2):
     similarity_matrix = np.zeros((len(embeddings1), len(embeddings2)))
@@ -231,23 +255,6 @@ def implement_safeguards(simplified_text):
             results[name] = "Fehlend"
 
     return results
-
-def two_phase_approach(original_text, simplified_text):
-    """Implement a two-phase approach inspired by the KnowHalu framework for German text."""
-    original_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', original_text))
-    simplified_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', simplified_text))
-    
-    non_fabrication_score = len(original_key_phrases.intersection(simplified_key_phrases)) / len(original_key_phrases)
-
-    original_entities = set(ent.text for ent in nlp(original_text).ents)
-    simplified_entities = set(ent.text for ent in nlp(simplified_text).ents)
-    
-    factual_accuracy_score = len(original_entities.intersection(simplified_entities)) / len(original_entities)
-
-    return {
-        'non_fabrication_score': non_fabrication_score,
-        'factual_accuracy_score': factual_accuracy_score
-    }
 
 def factuality_faithfulness_check(original_text, simplified_text):
     """Check factuality and faithfulness of the simplified German text."""
