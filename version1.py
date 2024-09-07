@@ -46,6 +46,9 @@ def initialize_gemini_client(api_key):
 def simplify_text_with_gemini(text, api_key, metrics=None):
     """Use Google Gemini to simplify the given German text, optionally using current metrics."""
     try:
+        if not text.strip():
+            return "Error: No text provided for simplification."
+
         model = initialize_gemini_client(api_key)
         chat_session = model.start_chat(history=[])
 
@@ -88,6 +91,9 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
             prompt += f"\n\nAktuelle Lesbarkeitsmetriken: {metrics}\nBitte verbessern Sie diese Metriken in Ihrer Vereinfachung."
 
         response = chat_session.send_message(prompt)
+
+        if not response.text.strip():
+            return "Error: The model returned an empty response. Please try again with a different text or check your API key."
 
         return response.text
     except Exception as e:
@@ -323,6 +329,9 @@ def constrained_reasoning(original_text, simplified_text, api_key):
         return f"Fehler: Anfrage konnte nicht verarbeitet werden. Bitte versuchen Sie es später erneut. Details: {str(e)}"
 
 def simplify_document(document_content, api_key, max_iterations=1):
+    if not document_content.strip():
+        return "Error: The extracted text from the PDF is empty. Please check the PDF file.", None, None, None, None, None
+
     initial_metrics = calculate_german_metrics(document_content)
     simplified_content = document_content
     iterations = []
@@ -330,6 +339,10 @@ def simplify_document(document_content, api_key, max_iterations=1):
     for i in range(max_iterations):
         previous_content = simplified_content
         simplified_content = simplify_text_with_gemini(simplified_content, api_key, initial_metrics)
+        
+        if simplified_content.startswith("Error:") or simplified_content.startswith("Fehler:"):
+            return simplified_content, None, iterations, initial_metrics, None, None
+
         current_metrics = calculate_german_metrics(simplified_content)
         
         iterations.append({
@@ -371,48 +384,54 @@ def main():
         if st.button("Simplify Document"):
             simplified_content, check_results, iterations, initial_metrics, final_metrics, constrained_reasoning_results = simplify_document(document_content, api_key)
 
-            st.subheader("Simplification Iterations")
-            for iteration in iterations:
-                with st.expander(f"Iteration {iteration['iteration']}"):
-                    st.write(iteration['content'])
-                    st.write("Metrics:", iteration['metrics'])
+            if simplified_content.startswith("Error:") or simplified_content.startswith("Fehler:"):
+                st.error(simplified_content)
+            else:
+                st.subheader("Simplification Iterations")
+                for iteration in iterations:
+                    with st.expander(f"Iteration {iteration['iteration']}"):
+                        st.write(iteration['content'])
+                        st.write("Metrics:", iteration['metrics'])
 
-            st.subheader("Final Simplified Text")
-            editable_text = st.text_area("Edit the simplified text if needed:", simplified_content, height=300)
+                st.subheader("Final Simplified Text")
+                editable_text = st.text_area("Edit the simplified text if needed:", simplified_content, height=300)
 
-            if st.button("Save Edited Text"):
-                with open("simplified_german_document.txt", "w", encoding="utf-8") as f:
-                    f.write(editable_text)
-                st.success("Simplified text saved to 'simplified_german_document.txt'")
+                if st.button("Save Edited Text"):
+                    with open("simplified_german_document.txt", "w", encoding="utf-8") as f:
+                        f.write(editable_text)
+                    st.success("Simplified text saved to 'simplified_german_document.txt'")
 
-            st.subheader("Metrics Comparison")
-            comparison_df = display_metrics_comparison(initial_metrics, final_metrics)
-            st.dataframe(comparison_df)
+                if final_metrics:
+                    st.subheader("Metrics Comparison")
+                    comparison_df = display_metrics_comparison(initial_metrics, final_metrics)
+                    st.dataframe(comparison_df)
 
-            st.subheader("Hallucination Check Results")
-            st.write(check_results)
+                if check_results:
+                    st.subheader("Hallucination Check Results")
+                    st.write(check_results)
 
-            st.subheader("Constrained Reasoning Results")
-            st.write(constrained_reasoning_results)
+                if constrained_reasoning_results:
+                    st.subheader("Constrained Reasoning Results")
+                    st.write(constrained_reasoning_results)
 
-            st.subheader("Additional Checks")
-            coverage_results = coverage_accuracy_assessment(document_content, simplified_content)
-            st.write("Coverage Assessment:", coverage_results)
+                st.subheader("Additional Checks")
+                coverage_results = coverage_accuracy_assessment(document_content, simplified_content)
+                st.write("Coverage Assessment:", coverage_results)
 
-            entity_verification = verify_medical_entities(document_content, simplified_content)
-            st.write("Medical Entity Verification:", entity_verification)
+                entity_verification = verify_medical_entities(document_content, simplified_content)
+                st.write("Medical Entity Verification:", entity_verification)
 
-            consistency_check = self_consistency_check(document_content, simplified_content, api_key)
-            st.write("Self-Consistency Check:", consistency_check)
+                consistency_check = self_consistency_check(document_content, simplified_content, api_key)
+                st.write("Self-Consistency Check:", consistency_check)
 
-            citation_check = citation_accuracy_check(document_content, simplified_content)
-            st.write("Citation Accuracy Check:", citation_check)
+                citation_check = citation_accuracy_check(document_content, simplified_content)
+                st.write("Citation Accuracy Check:", citation_check)
 
-            safeguards = implement_safeguards(simplified_content)
-            st.write("Safeguards Implementation:", safeguards)
+                safeguards = implement_safeguards(simplified_content)
+                st.write("Safeguards Implementation:", safeguards)
 
-            two_phase_results = two_phase_approach(document_content, simplified_content)
-            st.write("Two-Phase Approach Results:", two_phase_results)
+                two_phase_results = two_phase_approach(document_content, simplified_content)
+                st.write("Two-Phase Approach Results:", two_phase_results)
 
 if __name__ == "__main__":
     main()
