@@ -496,20 +496,31 @@ def implement_safeguards(simplified_text):
 
 def two_phase_approach(original_text, simplified_text):
     """Implement a two-phase approach inspired by the KnowHalu framework."""
-    original_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', original_text))
-    simplified_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', simplified_text))
-    
-    non_fabrication_score = len(original_key_phrases.intersection(simplified_key_phrases)) / len(original_key_phrases)
+    try:
+        original_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', original_text))
+        simplified_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', simplified_text))
+        
+        non_fabrication_score = len(original_key_phrases.intersection(simplified_key_phrases)) / len(original_key_phrases) if original_key_phrases else 1.0
 
-    original_entities = set(ent.text for ent in nlp(original_text).ents)
-    simplified_entities = set(ent.text for ent in nlp(simplified_text).ents)
-    
-    factual_accuracy_score = len(original_entities.intersection(simplified_entities)) / len(original_entities)
+        original_doc = nlp(original_text)
+        simplified_doc = nlp(simplified_text)
 
-    return {
-        'non_fabrication_score': non_fabrication_score,
-        'factual_accuracy_score': factual_accuracy_score
-    }
+        original_entities = set(ent.text for ent in original_doc.ents)
+        simplified_entities = set(ent.text for ent in simplified_doc.ents)
+        
+        factual_accuracy_score = len(original_entities.intersection(simplified_entities)) / len(original_entities) if original_entities else 1.0
+
+        return {
+            'non_fabrication_score': non_fabrication_score,
+            'factual_accuracy_score': factual_accuracy_score
+        }
+    except Exception as e:
+        logger.error(f"Error in two_phase_approach: {str(e)}")
+        return {
+            'non_fabrication_score': 0,
+            'factual_accuracy_score': 0,
+            'error': str(e)
+        }
 
 def factuality_faithfulness_check(original_text, simplified_text):
     """Check factuality and faithfulness of the simplified text."""
