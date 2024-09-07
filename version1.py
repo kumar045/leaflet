@@ -448,7 +448,7 @@ def verify_medical_entities(original_text, simplified_text):
         'missing_entities': list(missing_entities)
     }
 
-def self_consistency_check(original_text, simplified_text, api_key, num_versions=3):
+def self_consistency_check(original_text, simplified_text, api_key, num_versions=2):
     """Generate multiple simplified versions and compare them for consistency."""
     versions = [simplify_text_with_gemini(original_text, api_key) for _ in range(num_versions)]
     versions.append(simplified_text)
@@ -705,7 +705,7 @@ def process_text_with_hallucination_checks(original_text, api_key):
     simplified_text = simplify_text_with_gemini(original_text, api_key)
     
     iterations = []
-    max_iterations = 5
+    max_iterations = 1
     
     for i in range(max_iterations):
         entity_verification = verify_medical_entities(original_text, simplified_text)
