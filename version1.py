@@ -5,13 +5,51 @@ import textstat
 import logging
 import math
 import re
-import spacy
 import numpy as np
 import pandas as pd
-from spacy.cli import download
+import os
+import sys
+import requests
+import tarfile
+import spacy
+from spacy.util import get_package_path
 
-# Download the German model
-download("de_core_news_sm")
+# Function to download and extract the model
+def download_model(model_name, version):
+    # URL for the model
+    url = f"https://github.com/explosion/spacy-models/releases/download/{model_name}-{version}/{model_name}-{version}.tar.gz"
+    
+    # Local filename
+    filename = f"{model_name}-{version}.tar.gz"
+    
+    # Download directory (use /tmp for Streamlit cloud)
+    download_dir = "Spacy"
+    
+    # Full path for the downloaded file
+    file_path = os.path.join(download_dir, filename)
+    
+    # Download the file
+    response = requests.get(url)
+    with open(file_path, 'wb') as f:
+        f.write(response.content)
+    
+    # Extract the file
+    with tarfile.open(file_path, "r:gz") as tar:
+        tar.extractall(path=download_dir)
+    
+    # Remove the tar.gz file
+    os.remove(file_path)
+    
+    # Return the path to the extracted model
+    return os.path.join(download_dir, model_name)
+
+# Download and set up the model
+model_name = "de_core_news_sm"
+model_version = "3.7.0"  # You may need to update this to the latest version
+model_path = download_model(model_name, model_version)
+
+# Add the model path to Python's sys.path
+sys.path.append(model_path)
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -20,7 +58,7 @@ logger = logging.getLogger(__name__)
 # Load spaCy model
 @st.cache_resource
 def load_spacy_model():
-    return spacy.load("de_core_news_sm")
+    return spacy.load(model_path)
 
 nlp = load_spacy_model()
 
