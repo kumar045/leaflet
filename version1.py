@@ -155,7 +155,7 @@ def verify_medical_entities(original_text, simplified_text):
         'missing_entities': list(missing_entities)
     }
 
-def self_consistency_check(original_text, simplified_text, api_key, num_versions=3):
+def self_consistency_check(original_text, simplified_text, api_key, num_versions=2):
     """Generate multiple simplified versions of German text and compare them for consistency."""
     versions = [simplify_text_with_gemini(original_text, api_key) for _ in range(num_versions)]
     versions.append(simplified_text)
