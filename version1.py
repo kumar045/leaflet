@@ -23,7 +23,7 @@ def download_model(model_name, version):
     filename = f"{model_name}-{version}.tar.gz"
     
     # Download directory (use /tmp for Streamlit cloud)
-    download_dir = "Spacy"
+    download_dir = ""
     
     # Full path for the downloaded file
     file_path = os.path.join(download_dir, filename)
