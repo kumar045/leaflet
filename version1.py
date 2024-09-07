@@ -103,14 +103,19 @@ def simplify_text_with_gemini(text, api_key, metrics=None):
 def get_embeddings(texts):
     embeddings = []
     for text in texts:
-        result = genai.embed_content(
-            model="models/embedding-001",
-            content=text,
-            task_type="retrieval_document"
-        )
-        embeddings.append(result['embedding'])
+        if not text.strip():
+            continue  # Skip empty texts
+        try:
+            result = genai.embed_content(
+                model="models/embedding-001",
+                content=text,
+                task_type="retrieval_document"
+            )
+            embeddings.append(result['embedding'])
+        except Exception as e:
+            logger.error(f"Error getting embedding for text: {str(e)}")
     return embeddings
-
+    
 def cosine_similarity(embeddings1, embeddings2):
     similarity_matrix = np.zeros((len(embeddings1), len(embeddings2)))
     for i, emb1 in enumerate(embeddings1):
@@ -119,23 +124,49 @@ def cosine_similarity(embeddings1, embeddings2):
     return similarity_matrix
 
 def coverage_accuracy_assessment(original_text, simplified_text):
-    original_sentences = [sent.text.strip() for sent in nlp(original_text).sents]
-    simplified_sentences = [sent.text.strip() for sent in nlp(simplified_text).sents]
+    """Assess coverage and accuracy of simplified text compared to original."""
+    try:
+        original_sentences = [sent.text.strip() for sent in nlp(original_text).sents if sent.text.strip()]
+        simplified_sentences = [sent.text.strip() for sent in nlp(simplified_text).sents if sent.text.strip()]
 
-    original_embeddings = get_embeddings(original_sentences)
-    simplified_embeddings = get_embeddings(simplified_sentences)
+        if not original_sentences or not simplified_sentences:
+            return {
+                'coverage_score': 0,
+                'covered_sentences': 0,
+                'total_original_sentences': len([sent for sent in nlp(original_text).sents]),
+                'warning': "No non-empty sentences found in original or simplified text."
+            }
 
-    similarity_matrix = cosine_similarity(original_embeddings, simplified_embeddings)
+        original_embeddings = get_embeddings(original_sentences)
+        simplified_embeddings = get_embeddings(simplified_sentences)
 
-    covered_sentences = sum(similarity_matrix.max(axis=1) > 0.8)  # Threshold can be adjusted
-    coverage_score = covered_sentences / len(original_sentences)
+        if not original_embeddings or not simplified_embeddings:
+            return {
+                'coverage_score': 0,
+                'covered_sentences': 0,
+                'total_original_sentences': len(original_sentences),
+                'warning': "Failed to generate embeddings for sentences."
+            }
 
-    return {
-        'coverage_score': coverage_score,
-        'covered_sentences': covered_sentences,
-        'total_original_sentences': len(original_sentences)
-    }
+        similarity_matrix = cosine_similarity(original_embeddings, simplified_embeddings)
 
+        covered_sentences = sum(similarity_matrix.max(axis=1) > 0.8)  # Threshold can be adjusted
+        coverage_score = covered_sentences / len(original_sentences) if original_sentences else 0
+
+        return {
+            'coverage_score': coverage_score,
+            'covered_sentences': covered_sentences,
+            'total_original_sentences': len(original_sentences)
+        }
+    except Exception as e:
+        logger.error(f"Error in coverage_accuracy_assessment: {str(e)}")
+        return {
+            'coverage_score': 0,
+            'covered_sentences': 0,
+            'total_original_sentences': 0,
+            'error': str(e)
+        }
+        
 def verify_medical_entities(original_text, simplified_text):
     """Verify that medical entities in the original German text are preserved in the simplified text."""
     original_doc = nlp(original_text)
