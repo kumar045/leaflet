@@ -22,10 +22,12 @@ logger = logging.getLogger(__name__)
 def load_spacy_model():
     # Load the German language model without downloading
     nlp = German()
+    # Add the sentencizer to the pipeline
+    nlp.add_pipe('sentencizer')
     return nlp
     
 nlp = load_spacy_model()
-
+   
 def extract_text_from_pdf(pdf_file):
     """Extract text from a PDF file."""
     try:
@@ -397,22 +399,35 @@ def cosine_similarity(embeddings1, embeddings2):
     return similarity_matrix
 
 def coverage_accuracy_assessment(original_text, simplified_text):
-    original_sentences = [sent.text.strip() for sent in nlp(original_text).sents]
-    simplified_sentences = [sent.text.strip() for sent in nlp(simplified_text).sents]
+    """Assess coverage and accuracy of simplified text compared to original."""
+    try:
+        original_doc = nlp(original_text)
+        simplified_doc = nlp(simplified_text)
 
-    original_embeddings = get_embeddings(original_sentences)
-    simplified_embeddings = get_embeddings(simplified_sentences)
+        original_sentences = [sent.text.strip() for sent in original_doc.sents]
+        simplified_sentences = [sent.text.strip() for sent in simplified_doc.sents]
 
-    similarity_matrix = cosine_similarity(original_embeddings, simplified_embeddings)
+        original_embeddings = get_embeddings(original_sentences)
+        simplified_embeddings = get_embeddings(simplified_sentences)
 
-    covered_sentences = sum(similarity_matrix.max(axis=1) > 0.8)  # Threshold can be adjusted
-    coverage_score = covered_sentences / len(original_sentences)
+        similarity_matrix = cosine_similarity(original_embeddings, simplified_embeddings)
 
-    return {
-        'coverage_score': coverage_score,
-        'covered_sentences': covered_sentences,
-        'total_original_sentences': len(original_sentences)
-    }
+        covered_sentences = sum(similarity_matrix.max(axis=1) > 0.8)  # Threshold can be adjusted
+        coverage_score = covered_sentences / len(original_sentences)
+
+        return {
+            'coverage_score': coverage_score,
+            'covered_sentences': covered_sentences,
+            'total_original_sentences': len(original_sentences)
+        }
+    except Exception as e:
+        logger.error(f"Error in coverage_accuracy_assessment: {str(e)}")
+        return {
+            'coverage_score': 0,
+            'covered_sentences': 0,
+            'total_original_sentences': 0,
+            'error': str(e)
+        }
 
 def verify_medical_entities(original_text, simplified_text):
     """Verify that medical entities in the original text are preserved in the simplified text."""
