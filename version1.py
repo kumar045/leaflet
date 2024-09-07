@@ -524,26 +524,51 @@ def two_phase_approach(original_text, simplified_text):
 
 def factuality_faithfulness_check(original_text, simplified_text):
     """Check factuality and faithfulness of the simplified text."""
-    original_doc = nlp(original_text)
-    simplified_doc = nlp(simplified_text)
+    try:
+        original_doc = nlp(original_text)
+        simplified_doc = nlp(simplified_text)
 
-    original_entities = set(ent.text for ent in original_doc.ents)
-    simplified_entities = set(ent.text for ent in simplified_doc.ents)
-    factuality_score = len(original_entities.intersection(simplified_entities)) / len(original_entities)
+        original_entities = set(ent.text for ent in original_doc.ents)
+        simplified_entities = set(ent.text for ent in simplified_doc.ents)
+        
+        factuality_score = len(original_entities.intersection(simplified_entities)) / len(original_entities) if original_entities else 1.0
 
-    original_sentences = [sent.text for sent in original_doc.sents]
-    simplified_sentences = [sent.text for sent in simplified_doc.sents]
-    
-    original_embeddings = get_embeddings(original_sentences)
-    simplified_embeddings = get_embeddings(simplified_sentences)
-    
-    similarities = cosine_similarity(original_embeddings, simplified_embeddings)
-    faithfulness_score = similarities.max(axis=1).mean()
+        original_sentences = [sent.text for sent in original_doc.sents]
+        simplified_sentences = [sent.text for sent in simplified_doc.sents]
+        
+        if not original_sentences or not simplified_sentences:
+            logger.warning("No sentences found in original or simplified text.")
+            return {
+                'factuality_score': factuality_score,
+                'faithfulness_score': 1.0,
+                'warning': "No sentences found in original or simplified text."
+            }
 
-    return {
-        'factuality_score': factuality_score,
-        'faithfulness_score': faithfulness_score
-    }
+        original_embeddings = get_embeddings(original_sentences)
+        simplified_embeddings = get_embeddings(simplified_sentences)
+        
+        if not original_embeddings or not simplified_embeddings:
+            logger.warning("Failed to generate embeddings for sentences.")
+            return {
+                'factuality_score': factuality_score,
+                'faithfulness_score': 0.0,
+                'warning': "Failed to generate embeddings for sentences."
+            }
+
+        similarities = cosine_similarity(original_embeddings, simplified_embeddings)
+        faithfulness_score = similarities.max(axis=1).mean()
+
+        return {
+            'factuality_score': factuality_score,
+            'faithfulness_score': faithfulness_score
+        }
+    except Exception as e:
+        logger.error(f"Error in factuality_faithfulness_check: {str(e)}")
+        return {
+            'factuality_score': 0,
+            'faithfulness_score': 0,
+            'error': str(e)
+        }
 
 def count_syllables(word):
     """Count the number of syllables in a word."""
