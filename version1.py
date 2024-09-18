@@ -1,17 +1,11 @@
 import streamlit as st
 import PyPDF2
 import google.generativeai as genai
-import textstat
 import logging
 import math
 import re
 import numpy as np
 import pandas as pd
-import os
-import sys
-import requests
-import tarfile
-import spacy
 from spacy.lang.de import German
 
 # Set up logging
@@ -128,16 +122,16 @@ def two_phase_approach(original_text, simplified_text):
     original_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', original_text))
     simplified_key_phrases = set(re.findall(r'\b\w+(?:\s+\w+){2,3}\b', simplified_text))
     
-    logger.debug(f"Original Key Phrases: {original_key_phrases}")
-    logger.debug(f"Simplified Key Phrases: {simplified_key_phrases}")
+    print(f"Original Key Phrases: {original_key_phrases}")
+    print(f"Simplified Key Phrases: {simplified_key_phrases}")
     
     non_fabrication_score = len(original_key_phrases.intersection(simplified_key_phrases)) / len(original_key_phrases) if original_key_phrases else 1.0
 
     original_entities = set(ent.text for ent in nlp(original_text).ents)
     simplified_entities = set(ent.text for ent in nlp(simplified_text).ents)
 
-    logger.debug(f"Original Entities: {original_entities}")
-    logger.debug(f"Simplified Entities: {simplified_entities}")
+    print(f"Original Entities: {original_entities}")
+    print(f"Simplified Entities: {simplified_entities}")
     
     factual_accuracy_score = len(original_entities.intersection(simplified_entities)) / len(original_entities) if original_entities else 1.0
 
@@ -170,8 +164,8 @@ def coverage_accuracy_assessment(original_text, simplified_text):
         original_embeddings = get_embeddings(original_sentences)
         simplified_embeddings = get_embeddings(simplified_sentences)
 
-        logger.debug(f"Original Embedding: {original_embeddings}")
-        logger.debug(f"Simplified Embedding: {simplified_embeddings}")
+        print(f"Original Embedding: {original_embeddings}")
+        print(f"Simplified Embedding: {simplified_embeddings}")
 
         if not original_embeddings or not simplified_embeddings:
             return {
@@ -208,8 +202,8 @@ def verify_medical_entities(original_text, simplified_text):
     original_entities = set((ent.text.lower(), ent.label_) for ent in original_doc.ents if ent.label_ in ['DRUG', 'DISEASE', 'SYMPTOM'])
     simplified_entities = set((ent.text.lower(), ent.label_) for ent in simplified_doc.ents if ent.label_ in ['DRUG', 'DISEASE', 'SYMPTOM'])
 
-    logger.debug(f"Original Eentities from varify madical: {original_entities}")
-    logger.debug(f"Simplified Eentities from varify madical: {simplified_entities}")
+    print(f"Original Eentities from varify madical: {original_entities}")
+    print(f"Simplified Eentities from varify madical: {simplified_entities}")
 
     preserved_entities = original_entities.intersection(simplified_entities)
     missing_entities = original_entities - simplified_entities
@@ -232,7 +226,7 @@ def self_consistency_check(original_text, simplified_text, api_key, num_versions
 
     consistency_score = similarities.mean()
 
-    logger.debug(f"Consistency Score: {consistency_score}")
+    print(f"Consistency Score: {consistency_score}")
     
     return {
         'consistency_score': consistency_score,
@@ -244,8 +238,8 @@ def citation_accuracy_check(original_text, simplified_text):
     original_citations = re.findall(r'\[(\d+)\]', original_text)
     simplified_citations = re.findall(r'\[(\d+)\]', simplified_text)
     
-    logger.debug(f"Original Citations: {original_citations}")
-    logger.debug(f"Simplified Citations: {simplified_citations}")
+    print(f"Original Citations: {original_citations}")
+    print(f"Simplified Citations: {simplified_citations}")
     
     preserved_citations = set(original_citations).intersection(set(simplified_citations))
     citation_accuracy = len(preserved_citations) / len(original_citations) if original_citations else 1.0
@@ -270,7 +264,7 @@ def implement_safeguards(simplified_text):
             results[name] = "Vorhanden"
         else:
             results[name] = "Fehlend"
-    logger.debug(f"Safeguard Result: {results}")
+    print(f"Safeguard Result: {results}")
     return results
 
 def factuality_faithfulness_check(original_text, simplified_text):
@@ -282,8 +276,8 @@ def factuality_faithfulness_check(original_text, simplified_text):
         original_entities = set(ent.text for ent in original_doc.ents)
         simplified_entities = set(ent.text for ent in simplified_doc.ents)
 
-        logger.debug(f"Original Entities from Factuality_Faithfulness_Check : {original_entities}")
-        logger.debug(f"Simplified Entities from Factuality_Faithfulness_Check : {simplified_entities}")
+        print(f"Original Entities from Factuality_Faithfulness_Check : {original_entities}")
+        print(f"Simplified Entities from Factuality_Faithfulness_Check : {simplified_entities}")
 
         if len(original_entities) == 0:
             factuality_score = 1.0  # If no entities in original, assume perfect factuality
@@ -303,8 +297,8 @@ def factuality_faithfulness_check(original_text, simplified_text):
         original_embeddings = get_embeddings(original_sentences)
         simplified_embeddings = get_embeddings(simplified_sentences)
         
-        logger.debug(f"Original Embedding from Factuality_Faithfulness_Check : {original_embeddings}")
-        logger.debug(f"Simplified Embedding from Factuality_Faithfulness_Check : {simplified_embeddings}")
+        print(f"Original Embedding from Factuality_Faithfulness_Check : {original_embeddings}")
+        print(f"Simplified Embedding from Factuality_Faithfulness_Check : {simplified_embeddings}")
         
         if not original_embeddings or not simplified_embeddings:
             return {
@@ -410,7 +404,7 @@ def constrained_reasoning(original_text, simplified_text, api_key):
 
         response = chat_session.send_message(prompt)
         
-        logger.debug(f"Response from Constrained Reasoning: {response}")
+        print(f"Response from Constrained Reasoning: {response}")
 
         return response.text
     except Exception as e:
