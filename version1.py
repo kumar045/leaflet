@@ -208,8 +208,8 @@ def verify_medical_entities(original_text, simplified_text):
     original_entities = set((ent.text.lower(), ent.label_) for ent in original_doc.ents if ent.label_ in ['DRUG', 'DISEASE', 'SYMPTOM'])
     simplified_entities = set((ent.text.lower(), ent.label_) for ent in simplified_doc.ents if ent.label_ in ['DRUG', 'DISEASE', 'SYMPTOM'])
 
-    logger.debug(f"Original Eentities from varify madical: {original_embeddings}")
-    logger.debug(f"Simplified Eentities from varify madical: {simplified_embeddings}")
+    logger.debug(f"Original Eentities from varify madical: {original_entities}")
+    logger.debug(f"Simplified Eentities from varify madical: {simplified_entities}")
 
     preserved_entities = original_entities.intersection(simplified_entities)
     missing_entities = original_entities - simplified_entities
