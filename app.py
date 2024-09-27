@@ -385,7 +385,7 @@ Kontonummer."
             return response.choices[0].message.content
         elif ai_option == "Claude":
             client = initialize_claude_client(api_key)
-           response = client.messages.create(
+            response = client.messages.create(
             model="claude-3-opus-20240229",
             max_tokens=1024,
             messages=[
