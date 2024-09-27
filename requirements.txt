@@ -4,3 +4,4 @@ google-generativeai
 textstat==0.7.3
 anthropic
 spacy
+openai
