@@ -390,7 +390,7 @@ Kontonummer."
             max_tokens=1024,
             messages=[
                 {"role": "user", "content": prompt}
-            ]
+            ])
             return response.content[0].text
 
     except Exception as e:
