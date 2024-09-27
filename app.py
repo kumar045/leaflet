@@ -352,13 +352,6 @@ Kontonummer."
 "Ten-nisplatz"
 **Vereinfachter Text:** 
 "Tennis-platz"
-#Ausgabeformat:
-##Produkt
-##Nebenwirkungen
-##Wechselwirkungen
-##Einnahmehinweise
-##Sonstige Hinweise
-
         Vereinfachen Sie nun bitte den folgenden Text:
 
         {text}
