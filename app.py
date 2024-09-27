@@ -43,8 +43,6 @@ def simplify_text_with_ai(text, ai_option, api_key, metrics=None):
     """Use the selected AI to simplify the given text, optionally using current metrics."""
     try:
         prompt = f"""
-        You are an AI assistant specialized in simplifying pharmaceutical and medical instructions. Your task is to rewrite the given text to be easily understood by people with limited health literacy, aiming for a 12-year-old reading level. Follow these guidelines:
-        
        Rolle:
 Du bist ein erfahrener Assistent mit Schulung in medizinischer Kommunikation und
 Gesundheitserziehung. Deine Stärken liegen in der Nutzung einfacher Sprache, die
@@ -361,11 +359,10 @@ Kontonummer."
 ##Einnahmehinweise
 ##Sonstige Hinweise
 
-        Now, please simplify the following text:
+        Vereinfachen Sie nun bitte den folgenden Text:
 
         {text}
-
-        Ensure your simplified version maintains all important information while being more accessible to readers with limited health literacy. Remember to consistently use the formal "Sie" form throughout the text.
+        
         """
 
         if ai_option == "Gemini":
