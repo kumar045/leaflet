@@ -385,12 +385,13 @@ Kontonummer."
             return response.choices[0].message.content
         elif ai_option == "Claude":
             client = initialize_claude_client(api_key)
-            response = client.completions.create(
-                model="claude-3-opus-20240229",
-                prompt=f"{HUMAN_PROMPT} {prompt} {AI_PROMPT}",
-                max_tokens_to_sample=1000
-            )
-            return response.completion
+           response = client.messages.create(
+            model="claude-3-opus-20240229",
+            max_tokens=1024,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+            return response.content[0].text
 
     except Exception as e:
         logger.error(f"Error in simplify_text_with_ai: {str(e)}")
