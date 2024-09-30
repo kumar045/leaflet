@@ -101,7 +101,7 @@ Simple:
         elif ai_option == "Claude":
             client = initialize_claude_client(api_key)
             response = client.messages.create(
-            model="claude-3-opus-20240229",
+            model="claude-3-opus",
             max_tokens=32000,
             messages=[
                 {"role": "user", "content": prompt}
