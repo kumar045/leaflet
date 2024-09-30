@@ -102,7 +102,7 @@ Simple:
             client = initialize_claude_client(api_key)
             response = client.messages.create(
             model="claude-3-sonnet-20240229",
-            max_tokens=32000,
+            max_tokens=8096,
             messages=[
                 {"role": "user", "content": prompt}
             ])
