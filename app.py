@@ -100,7 +100,7 @@ Simple:
             return response.choices[0].message.content
         elif ai_option == "Claude":
             client = initialize_claude_client(api_key)
-            response = client.beta.messages.create(
+            response = client.messages.create(
             model="claude-3-sonnet-20240229",
             max_tokens=32000,
             messages=[
