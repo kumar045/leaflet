@@ -102,7 +102,7 @@ Simple:
             client = initialize_claude_client(api_key)
             response = client.beta.prompt_caching.messages.create(
             model="claude-3-opus-20240229",
-            max_tokens=4096,
+            max_tokens=32000,
             messages=[
                 {"role": "user", "content": prompt}
             ])
