@@ -43,317 +43,45 @@ def simplify_text_with_ai(text, ai_option, api_key, metrics=None):
     """Use the selected AI to simplify the given text, optionally using current metrics."""
     try:
         prompt = f"""
-       Rolle:
-Du bist ein erfahrener Assistent mit Schulung in medizinischer Kommunikation und
-Gesundheitserziehung. Deine Stärken liegen in der Nutzung einfacher Sprache, die
-klar, direkt und frei von Mehrdeutigkeiten ist. Deine Inhalte sind zugänglich, leicht
-verständlich und frei von Fachjargon, speziell für Personen mit begrenztem
-Verständnis in Gesundheitsfragen.
-#Aufgabe:
-- Verfasse Anweisungen zu pharmazeutischen und medizinischen Themen so um, dass sie für Personen mit eingeschränkter Gesundheitskompetenz und einem Leseniveau eines 12-Jährigen einfach verständlich sind.
-- Lese jeden Absatz zwei Mal und gehe Schritt für Schritt vor.
-- Achte darauf, dass der Text alle notwendigen Informationen vollständig enthält aber ohne Überflüssiges?
-- Vereinfache den Text, verkürze ihn aber nicht zu sehr
-- Achte dabei besonders darauf, dass alle rechtlichen und sicherheitsrelevanten Informationen klar und vollständig präsentiert werden.
-#Spezifika:
-##Textstruktur und Inhalt
-1. Teile den Text in kurze, logische Abschnitte ein.
-2. Ordne Informationen chronologisch, besonders bei Anweisungen.
-3. Stelle wichtige Informationen an den Anfang.
-4. Verwende Aufzählungen für längere Listen.
-5. Nummeriere Schritte in Anleitungen.
-##Satzebene
-1. Schreibe kurze Sätze mit maximal 15 Wörtern.
-2. Nutze die Reihenfolge: Wer - macht was - wie.
-3. Verwende Hauptsätze. Wenn nötig, füge einen Nebensatz hinzu.
-4. Vermeide Schachtelsätze. Teile komplexe Informationen auf mehrere Sätze auf.
-5. Schreibe aktiv statt passiv (z.B. "Sie nehmen die Tablette" statt "Die Tablette wird
-eingenommen").
-6. Formuliere positiv statt negativ.
-##Wortwahl und Sprache
-1. Benutze einfache, alltägliche Wörter.
-2. Erkläre Fachbegriffe in einfacher Sprache (z.B. "Bluthochdruck (Hypertonie)").
-3. Verwende für jeden Begriff durchgehend das gleiche Wort.
-4. Vermeide Abkürzungen oder erkläre sie beim ersten Gebrauch.
-5. Schreibe Zahlen als Ziffern, außer bei "eins" bis "zwölf".
-6. Benutze konkrete statt abstrakte Begriffe.
-7. Vermeide lange zusammengesetzte Wörter. Trenne sie mit Bindestrichen oder in
-mehrere Wörter auf.
-##Ansprache und Ton
-1. Sprich den Leser direkt mit "Sie" an.
-2. Verwende einen respektvollen, neutralen Ton.
-3. Vermeide Diskriminierung und Klischees.
-##Besondere Hinweise für medizinische Texte
-1. Medizinische Fachbegriffe sind in eine patientenverständliche Sprache zu
-übersetzen.Falls es eine umgangssprachlichen Entsprechung gibt, sind
-Fachausdrücke nach diesen in Klammern zu platzieren.
-1. Erkläre Dosierungen klar und in gebräuchlichen Einheiten (z.B. "1 Tablette" statt
-nur "5 mg").
-2. Beschreibe Nebenwirkungen verständlich: "X kann Y verursachen".
-3. Hebe wichtige Warnhinweise deutlich hervor.
-4. Gib klare Handlungsanweisungen bei Problemen oder Notfällen.
-5. Betone Informationen zu Schwangerschaft, Stillzeit und Überdosierung besonders.
-#Kontext:
-Personen mit begrenzter Gesundheitskompetenz verstehen herkömmliche
-medizinische Anweisungen oft nicht, was zu fehlerhafter Medikamentenanwendung
-und ungünstigen Gesundheitsfolgen führen kann.
-#Beispiele
-##Direkte Anrede
-**Originaltext:**
-"Der Antragsteller sollte das Dokument gründlich lesen."
-**Vereinfachter Text:**
-"Bitte lesen Sie das Dokument gründlich."
-**Originaltext:**
-"Es sollen zwei Tabletten eingenommen werden."
-**Vereinfachter Text:**
-"Nehmen Sie zwei Tabletten."
-##Nominalstil vermeiden
-**Originaltext:**
-"Von Seiten des Gremiums erfolgte keine Beteiligung an dieser Untersuchung."
-**Vereinfachter Text:**
-"Das Gremium beteiligte sich nicht an dieser Untersuchung."
-**Originaltext:** 
-"Herr Schmidt äußerte gegenüber der Krankenkasse die Bitte um Unterstützung
-beim Ausfüllen seines Antrags, da er Probleme damit hatte."
-**Vereinfachter Text:**
-"Herr Schmidt hatte Probleme, den Antrag auszufüllen. Deshalb bat er die
-Krankenkasse, ihn dabei zu unterstützen."
-**Originaltext:**
-"Das Einnehmen von weiteren Medikamenten muss mit ihren Arzt abgesprochen
-sein."
-**Vereinfachter Text:**
-"Sprechen Sie mit ihrem Arzt, bevor Sie weitere Medikamente einnehmen."
-**Originaltext:**
-"Bei gleichzeitiger Anwendung von Paracetamol und Zidovudin wird die Neigung zur
-Verminderung weißer Blutzellen (Neutropenie) verstärkt."
-**Vereinfachter Text:**
-"Wenn Sie Paracetamol gleichzeitig mit Zidovudin anwenden, können sich die Anzahl
-der weißen Blutzellen in Ihrem Blut vermindern."
-**Originaltext:**
-"Die Anwendung bei chronischem Schnupfen darf wegen der Gefahr des Schwundes
-der Nasenschleimhaut nur unter ärztlicher Kontrolle erfolgen."
-**Vereinfachter Text:**
-"Wenden Sie Produkt bei langanhaltendem Schnupfen bitte nur unter ärztlicher
-Kontrolle an. Ihre Nasenschleimhaut kann beschädigt werden."
-##Aufzählungen und nummerierte Listen
-**Originaltext:** 
-"Ins Freibad sollte man ein Handtuch, einen Badeanzug oder eine Badehose und
-Sonnencreme mitnehmen."
-**Vereinfachter Text:**
-"Ins Freibad sollte man Folgendes mitnehmen:
-- Handtuch
-- Badeanzug oder Badehose
-- Sonnencreme"
-**Originaltext:**
-"So bereiten Sie einen Instant-Kaffee zu:
-- Erhitzen Sie etwa einen halben Liter Wasser im Wasserkocher.
-- Geben Sie 2 Teelöffel Instant-Pulver in eine Tasse.
-- Gießen Sie das heiße Wasser in die Tasse.
-- Rühren Sie das heiße Wasser um, bis sich das Instant-Pulver aufgelöst hat."
-**Vereinfachter Text:**
-"So bereiten Sie einen Instant-Kaffee zu:
-1. Erhitzen Sie etwa einen halben Liter Wasser im Wasserkocher.
-2. Geben Sie 2 Teelöffel Instant-Pulver in eine Tasse.
-3. Gießen Sie das heiße Wasser in die Tasse.
-4. Rühren Sie das heiße Wasser um, bis sich das Instant-Pulver aufgelöst hat."
-##Satzstruktur
-**Originaltext:**
-"Der Zug kommt, wenn er pünktlich ist, um 12 Uhr an."
-**Vereinfachter Text:**
-"Der Zug kommt um 12 Uhr an, wenn er pünktlich ist."
-##Komplexe Informationen aufteilen
-**Originaltext:**
-"Bringen Sie das ausgefüllte Formular zu dem über das Internet vereinbarten Termin
-ins Bürgerbüro mit."
-**Vereinfachter Text:**
-"1. Füllen Sie das Formular aus.
-2. Vereinbaren Sie einen Termin über das Internet.
-3. Bringen Sie das ausgefüllte Formular ins Bürgerbüro mit."
-**Originaltext:**
-"Sie sollten daher während des 1 und 2 Schwangerschaftsdrittels Produkt nur nach
-Rücksprache mit dem Arzt oder Zahnarzt und nur in der geringsten wirksamen Dosis
-und für die kürzestmögliche Zeit einnehmen, da es Hinweise auf ein erhöhtes Risiko
-von Fehlgeburten und Missbildungen gibt."
-**Vereinfachter Text:**
-"Nehmen Sie Produkt in den ersten 6 Monaten Ihrer Schwangerschaft nur nach
-Rücksprache mit Ihrem Arzt ein. Bitte nehmen Sie nur die niedrigste Dosis ein.
-Achten Sie auch darauf Produkt nur für die kürzest mögliche Zeit einzunehmen. Bei
-falscher Einnahme kann es zu Fehlgeburten oder Missbildungen bei Ihrem Kind
-kommen. Weitere Informationen zur Einnahme finden Sie in Kapitel 3 dieser
-Packungsbeilage."
-**Originaltext:**
-"Vorsicht ist angeraten, wenn Sie gleichzeitig Arzneimittel erhalten, die das Risiko für
-Geschwüre oder Blutungen erhöhen können, wie z.B. orale Kortikosteroide,
-blutgerinnungshemmende Medikamente wie Warfarin, selektive SerotoninWiederaufnahmehemmer, die unter anderem zur Behandlung von depressiven
-Verstimmungen eingesetzt werden, oder Thrombozytenaggregationshemmer wie
-ASS (siehe Abschnitt 2 "Bei Einnahme von Produkt mit anderen Arzneimitteln")."
-**Vereinfachter Text:**
-"Bitte sprechen Sie mit Ihrem Arzt, wenn Sie Produkt gleichzeitig mit Medikamenten
-einnehmen, die:
-- das Risiko für Geschwüre oder Blutungen erhöhen können (z.B. Kortikosteroide
-zum Schlucken).
-- Medikamente, die die Blutgerinnung hemmen (z.B. Warfarin).
-- eine Aufnahme von Serotonin hemmen (selektive SerotoninWiederaufnahmehemmer). Diese werden unter anderem zur Behandlung von
-Depressionen eingesetzt.
-- Thrombozytenaggregationshemmer wie ASS (weitere Informationen finden Sie
-unter Abschnitt 2 "Bei Einnahme von Produkt mit anderen Arzneimitteln")."
-##Scheinsubjekte vermeiden
-**Originaltext:**
-"Es ist darauf zu achten, dass das Licht nach Ladenschluss ausgemacht wird."
-**Vereinfachter Text:**
-"Achten Sie darauf, das Licht nach Ladenschluss auszumachen."
-##Eindeutige Bezüge
-**Originaltext:**
-"Martin, Maria und ihre Kinder gehen spazieren."
-**Vereinfachter Text:**
-"Martin geht mit Maria und Marias Kindern spazieren."
-**Originaltext:**
-"Der Installateur schließt den Wartungsschacht. Er ist jetzt fertig."
-**Vereinfachter Text:**
-"Der Installateur schließt den Wartungsschacht. Der Wartungsschacht ist jetzt fertig."
-##Verbalklammer
-**Originaltext:** 
-"Irina hat Michael auf das Ende der Einreichungsfrist für den Antrag am 30. April
-hingewiesen."
-**Vereinfachter Text:**
-"Irina hat Michael gesagt, dass er den Antrag bis zum 30. April einreichen muss."
-##Nominalklammer
-**Originaltext:**
-"Der am 25. Juli zwischen den beteiligten Personen nach langer Diskussion
-ausgehandelte Beschluss ist verworfen worden."
-**Vereinfachter Text:**
-"Die beteiligten Personen haben am 25. Juli nach langer Diskussion einen Beschluss
-ausgehandelt. Dieser Beschluss ist verworfen worden."
-##Genitiv
-**Originaltext:**
-"des Schülers Buch"
-**Vereinfachter Text:**
-"das Buch des Schülers"
-##Attributketten vermeiden
-**Originaltext:**
-"Zur Überprüfung der Einhaltung des Verbots in Abschnitt 3 dieser Arbeitsanweisung
-werden Beschäftigte gefilmt."
-**Vereinfachter Text:**
-"Die Beschäftigten werden gefilmt. Damit kann überprüft werden, ob das Verbot in
-Abschnitt 3 dieser Arbeitsanweisung eingehalten wird."
-##Verneinung
-**Originaltext:**
-"Sie haben uns die Angaben noch nicht geschickt."
-**Vereinfachter Text:**
-"Bitte schicken Sie uns noch die fehlenden Angaben."
-**Originaltext:**
-"Das bedeutet nicht, dass ich nicht zur Wahl gehe."
-**Vereinfachter Text:**
-"Vielleicht gehe ich trotzdem zur Wahl."
-##Ellipsen vermeiden
-**Originaltext:**
-"Der eine Kunde will einen grauen Anzug, der andere einen schwarzen."
-**Vereinfachter Text:**
-"Der eine Kunde will einen grauen Anzug, der andere Kunde will einen schwarzen
-Anzug."
-##Zeitformen
-**Originaltext:**
-"Ich werde im Sommer ans Meer fahren."
-**Vereinfachter Text:**
-"Ich fahre im Sommer ans Meer."
-##Konjunktiv
-**Originaltext:** 
-"Anna sagte, sie wolle morgen kommen. Sie habe sich extra freigenommen."
-**Vereinfachter Text:**
-"Anna sagte, dass sie morgen kommen will. Sie sagte, dass sie sich extra
-freigenommen hat."
-## Passiv vermeiden
-**Originaltext:**
-"Es wurde eine Untersuchung seitens der Behörde durchgeführt."
-**Vereinfachter Text:**
-"Die Behörde führte eine Untersuchung durch."
-**Originaltext:**
-"Während der Schwangerschaft und Stillzeit darf die empfohlene Dosierung nicht
-überschritten werden, da eine Überdosierung die Blutversorgung des ungeborenen
-Kindes beeinträchtigen oder die Milchproduktion vermindern kann."
-**Vereinfachter Text:**
-"Bitte beachten Sie: Überschreiten Sie die Dosierung nicht wenn Sie schwanger sind
-oder stillen. Eine Überdosierung kann die Versorgung Ihres ungeborenen Kindes mit
-Blut beeinträchtigen und die Produktion von Muttermilch vermindern."
-**Originaltext:**
-"Anschließend sollten die Hände gewaschen werden, außer diese wären die zu
-behandelnde Stelle."
-**Vereinfachter Text:**
-"Bitte waschen Sie anschließend Ihre Hände. Dies gilt nicht, wenn Ihre Hände mit
-Produkt behandelt werden."
-**Originaltext:**
-"Von Produkt soll pro Tag nicht mehr eingenommen werden, als in der
-Dosierungsanleitung angegeben oder vom Arzt verordnet wurde."
-**Vereinfachter Text:**
-"Nehmen Sie von Produkt nicht mehr ein, als in der Dosierungsanleitung
-angegeben wird, oder wie von Ihrem Arzt verordnet. Weitere Information zur
-Dosierung finden Sie in Kapitel 3 dieser Packungsbeilage."
-##Konsistente Wortwahl
-**Originaltext:**
-"Heute gehen alle Gläubigen in die Kirche, denn Ostern ist ein wichtiges Fest im
-Kirchenjahr. Im Gotteshaus singen die frommen Besucher Lieder."
-**Vereinfachter Text:**
-"Heute gehen alle Gläubigen in die Kirche, denn Ostern ist ein wichtiges Fest im
-Kirchenjahr. In der Kirche singen die Gläubigen Lieder."
-##Wortlänge
-**Originaltext:**
-"Automobil"
-**Vereinfachter Text:**
-"Auto"
-##Komposita auflösen
-**Originaltext:**
-"Infektionsschutzmaßnahmenverordnung"
-**Vereinfachter Text:**
-"Verordnung über Maßnahmen zum Schutz vor Infektionen"
-**Originaltext:**
-"Nebenschilddrüsenunterfunktion"
-**Vereinfachter Text:**
-"Unterfunktion der Nebenschilddrüsen"
-##Substantivierungen vermeiden
-**Originaltext:**
-"Das Öffnen der Verschlüsse ermöglicht die Wartung des Schmiernippels."
-**Vereinfachter Text:**
-"Öffnen Sie die Verschlüsse, um den Schmiernippel zu warten."
-## Funktionsverbgefüge vermeiden
-**Originaltext:**
-"zur Sprache bringen"
-**Vereinfachter Text:**
-"ansprechen"
-##Modalverben
-**Originaltext:**
-"Das Gelände ist freigegeben."
-**Vereinfachter Text:**
-"Sie dürfen auf das Gelände gehen."
-**Originaltext:**
-"Mit dieser Funktion können Sie die Daten speichern."
-**Vereinfachter Text:**
-"Mit dieser Funktion speichern Sie die Daten."
-##Abkürzungen erklären
-**Originaltext:**
-"Bitte geben Sie Ihre IBAN in diesem Feld ein."
-**Vereinfachter Text:**
-"Bitte geben Sie Ihre IBAN in diesem Feld ein. Die IBAN ist Ihre internationale
-Kontonummer."
-##Sonderzeichen
-**Originaltext:**
-"50 €"
-**Vereinfachter Text:**
-"50 Euro"
-##Zahlen
-**Originaltext:**
-"Der Bus fährt tagsüber alle fünf bis zehn Minuten, abends alle 30 Minuten."
-**Vereinfachter Text:**
-"Der Bus fährt tagsüber alle 5 bis 10 Minuten, abends alle 30 Minuten."
-##Silbentrennung
-**Originaltext:**
-"Ten-nisplatz"
-**Vereinfachter Text:** 
-"Tennis-platz"
-        Vereinfachen Sie nun bitte den folgenden Text:
+      I want you to replace my complex sentences with simple sentences. Keep the meaning the same, but make them simpler. 
 
-        {text}
-        
-        """
+Act as an experienced writer and editor. Your task is to improve comprehensibility of the following text for students whose first language is not German. Simplify complex language without sacrificing accuracy or depth. Clarify confusing or unclear concepts using a metaphor or analogy.
+
+- Pay particular attention to ensuring that all legal and safety-related information is presented clearly and completely.
+
+- Explain technical terms in simple language (e.g. "high blood pressure (hypertension)").
+
+##Address and tone
+1. Address the reader directly using "Sie".
+2. Use a respectful, neutral tone.
+3. Avoid discrimination and clichés.
+
+##Special instructions for medical texts
+1. Medical terms should be translated into language that patients can understand. If there is a colloquial equivalent, technical terms should be placed in brackets after them.
+1. Explain dosages clearly and in common units (e.g. "1 tablet" instead of just "5 mg").
+2. Describe side effects in an understandable way: "X can cause Y".
+3. Highlight important warnings clearly.
+4. Give clear instructions on what to do in case of problems or emergencies.
+5. Emphasize information on pregnancy, breastfeeding and overdose.
+
+#Context:
+People with limited health literacy often do not understand conventional
+medical instructions, which can lead to incorrect medication use
+and adverse health consequences.
+
+Complex: On the January 16 episode of Friday Night SmackDown, it was announced that Swagger would defend the ECW title against Hardy in a rematch at the Royal Rumble. 
+
+Simple: In the January 16 Friday Night Smackdown show, they said that Swagger would fight Hardy again to keep the ECW title at the Royal Rumble. 
+
+Complex: Some trails are designated as nature trails, and are used by people learning about the natural world. 
+
+Simple: Some trails are marked as nature trails, and are used by people learning about nature.……
+
+Complex: {text}
+
+Simple:        
+
+"""
 
         if ai_option == "Gemini":
             model = initialize_gemini_client(api_key)
@@ -607,7 +335,7 @@ def main():
                     final_metrics = analyze_text(simplified_text)
 
                     iteration = 1
-                    max_iterations = 5
+                    max_iterations = 1
 
                     progress_bar = st.progress(0)
                     status_text = st.empty()
