@@ -8,12 +8,26 @@ import logging
 import math
 import re
 import spacy
-
+import sys
+import subprocess
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Load the German NLP model
+def download_spacy_model():
+    """Download the German spaCy model if not already installed."""
+    try:
+        nlp = spacy.load("de_core_news_sm")
+        logger.info("German spaCy model already installed.")
+    except OSError:
+        logger.info("Downloading German spaCy model...")
+        subprocess.check_call([sys.executable, "-m", "spacy", "download", "de_core_news_sm"])
+        logger.info("German spaCy model downloaded successfully.")
+
+# Call the function to ensure the model is downloaded
+download_spacy_model()
+
+# Now load the model
 nlp = spacy.load("de_core_news_sm")
 
 def extract_text_from_pdf(pdf_file):
