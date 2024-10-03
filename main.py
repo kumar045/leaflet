@@ -354,6 +354,29 @@ def main():
                     with col2:
                         display_metrics(final_metrics, "Final Metrics")
 
+                    # Check readability and provide feedback
+                    if is_text_readable(final_metrics):
+                        st.success("The simplified text meets the readability criteria.")
+                    else:
+                        st.warning("The simplified text does not meet all readability criteria. Further simplification may be needed.")
+                        st.info("Consider running the simplification process again on the current output to further improve readability.")
+
+                    # Option to re-simplify
+                    if st.button("Simplify Again"):
+                        st.write("Re-simplifying text...")
+                        simplified_text = simplify_text_with_ai(simplified_text, ai_option, api_key)
+                        final_metrics = analyze_text(simplified_text)
+                        
+                        st.subheader("Re-simplified Text")
+                        st.text_area("", value=simplified_text, height=400, disabled=True)
+                        
+                        display_metrics(final_metrics, "Updated Metrics")
+                        
+                        if is_text_readable(final_metrics):
+                            st.success("The re-simplified text now meets the readability criteria.")
+                        else:
+                            st.warning("The text still does not meet all readability criteria. Manual review and editing may be necessary.")
+
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
                 logger.error(f"Error in main function: {str(e)}", exc_info=True)
