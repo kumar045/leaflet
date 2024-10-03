@@ -30,6 +30,21 @@ download_spacy_model()
 # Now load the model
 nlp = spacy.load("de_core_news_sm")
 
+def initialize_gemini_client(api_key):
+    """Initialize the Google Gemini client with the provided API key."""
+    genai.configure(api_key=api_key)
+    return genai.GenerativeModel(
+        model_name="gemini-1.5-pro-exp-0801",
+    )
+
+def initialize_openai_client(api_key):
+    """Initialize the OpenAI client with the provided API key."""
+    return openai.OpenAI(api_key=api_key)
+
+def initialize_claude_client(api_key):
+    """Initialize the Anthropic Claude client with the provided API key."""
+    return Anthropic(api_key=api_key)
+    
 def extract_text_from_pdf(pdf_file):
     """Extract text from a PDF file."""
     try:
