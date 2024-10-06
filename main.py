@@ -82,34 +82,33 @@ def simplify_text_with_ai(text, ai_option, api_key, metrics=None):
 
         for paragraph in paragraphs:
             prompt = f"""
-            I want you to replace my complex sentences with simple sentences. Keep the meaning the same, but make them simpler. 
+            Ich möchte, dass Sie meine komplexen Sätze durch einfache Sätze ersetzen. Behalten Sie die Bedeutung bei, aber machen Sie sie einfacher.
 
-            Act as an experienced writer and editor. Your task is to improve comprehensibility of the following text for students whose first language is not German. Simplify complex language without sacrificing accuracy or depth. Clarify confusing or unclear concepts using a metaphor or analogy.
+Handeln Sie als erfahrener Autor und Lektor. Ihre Aufgabe ist es, die Verständlichkeit des folgenden Textes für Studierende zu verbessern, deren Muttersprache nicht Deutsch ist. Vereinfachen Sie komplexe Sprache, ohne Genauigkeit oder Tiefe zu opfern. Erläutern Sie verwirrende oder unklare Konzepte mithilfe einer Metapher oder Analogie.
 
-            - Pay particular attention to ensuring that all legal and safety-related information is presented clearly and completely.
-            - Explain technical terms in simple language (e.g. "high blood pressure (hypertension)").
+- Achten Sie besonders darauf, dass alle rechtlichen und sicherheitsrelevanten Informationen klar und vollständig dargestellt werden.
+- Erklären Sie Fachbegriffe in einfacher Sprache (z. B. „Bluthochdruck (Hypertonie)“).
 
-            ##Address and tone
-            1. Address the reader directly using "Sie".
-            2. Use a respectful, neutral tone.
-            3. Avoid discrimination and clichés.
+##Anrede und Ton
+1. Sprechen Sie den Leser direkt mit „Sie“ an.
+2. Verwenden Sie einen respektvollen, neutralen Ton.
+3. Vermeiden Sie Diskriminierung und Klischees.
 
-            ##Special instructions for medical texts
-            1. Medical terms should be translated into language that patients can understand. If there is a colloquial equivalent, technical terms should be placed in brackets after them.
-            2. Explain dosages clearly and in common units (e.g. "1 tablet" instead of just "5 mg").
-            3. Describe side effects in an understandable way: "X can cause Y".
-            4. Highlight important warnings clearly.
-            5. Give clear instructions on what to do in case of problems or emergencies.
-            6. Emphasize information on pregnancy, breastfeeding and overdose.
+##Besondere Hinweise für medizinische Texte
+1. Medizinische Begriffe sollten in eine für Patienten verständliche Sprache übersetzt werden. Wenn es eine umgangssprachliche Entsprechung gibt, sollten Fachbegriffe in Klammern dahinter gesetzt werden. 2. Erklären Sie Dosierungen klar und in gängigen Einheiten (z. B. „1 Tablette“ statt nur „5 mg“).
+3. Beschreiben Sie Nebenwirkungen auf verständliche Weise: „X kann Y verursachen“.
+4. Heben Sie wichtige Warnhinweise deutlich hervor.
+5. Geben Sie klare Anweisungen, was bei Problemen oder Notfällen zu tun ist.
+6. Heben Sie Informationen zu Schwangerschaft, Stillzeit und Überdosierung hervor.
 
-            #Context:
-            People with limited health literacy often do not understand conventional
-            medical instructions, which can lead to incorrect medication use
-            and adverse health consequences.
+#Kontext:
+Menschen mit eingeschränkter Gesundheitskompetenz verstehen herkömmliche
+medizinische Anweisungen oft nicht, was zu falscher Medikamenteneinnahme
+und nachteiligen gesundheitlichen Folgen führen kann.
 
-            Complex: {paragraph}
+Komplex: {Absatz}
 
-            Simple:        
+Einfach:
             """
 
             if ai_option == "Gemini":
