@@ -121,7 +121,7 @@ Einfach:
             elif ai_option == "OpenAI":
                 client = initialize_openai_client(api_key)
                 response = client.chat.completions.create(
-                    model="gpt-4-1106-preview",
+                    model="gpt-4o",
                     messages=[
                         {"role": "system", "content": "You are a helpful assistant that simplifies medical texts."},
                         {"role": "user", "content": prompt}
